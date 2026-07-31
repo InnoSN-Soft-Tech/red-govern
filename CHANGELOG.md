@@ -10,7 +10,7 @@ alpha, functionality and interfaces may change between releases.
 
 No unreleased changes have been recorded yet.
 
-## 0.1.0a1 - 2026-07-30
+## 0.1.0a1 - 2026-07-31
 
 Initial alpha release of Red-Govern.
 
