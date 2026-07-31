@@ -1,0 +1,90 @@
+config_version: 1
+
+redshift:
+  profile_name: default
+
+  connection:
+    host: null
+    port: 5439
+    database: dev
+    user: null
+    connect_timeout_seconds: 15
+    statement_timeout_seconds: 60
+    tcp_keepalive: true
+
+  authentication:
+    method: auto
+    password_env: RED_GOVERN_REDSHIFT_PASSWORD
+    aws_profile: null
+    cluster_identifier: null
+    workgroup_name: null
+    region: null
+    db_user: null
+
+  compatibility:
+    mode: auto
+    deployment_type: auto
+    version_override: null
+    prefer_sys_views: true
+    allow_legacy_fallbacks: true
+
+  ssl:
+    enabled: true
+    mode: verify-full
+
+governance:
+  object_quota:
+    enabled: true
+
+    # Set this to the applicable object/table quota for your environment.
+    # Leave null when the quota has not yet been confirmed.
+    limit_override: null
+
+    warning_threshold: 0.80
+    critical_threshold: 0.90
+
+  lifecycle:
+    enabled: true
+    detect_recreation: true
+
+  query_monitoring:
+    enabled: false
+    capture_query_text: false
+    redact_literals: true
+
+classification:
+  enabled: true
+  rules_file: ./classification.yml
+
+  operational_registry:
+    source: excel
+    path: ./operational_tables.xlsx
+
+history:
+  enabled: true
+  backend: sqlite
+  path: ~/.red-govern/state/governance.db
+  retention_days: 730
+
+outputs:
+  cli:
+    enabled: true
+
+  json:
+    enabled: false
+    path: ./reports/red-govern.json
+
+  excel:
+    enabled: false
+    path: ./reports/red-govern.xlsx
+
+privacy:
+  telemetry: false
+  capture_query_text: false
+  redact_literals: true
+  external_services: false
+
+actions:
+  read_only: true
+  allow_query_cancellation: false
+  allow_database_writes: false

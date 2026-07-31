@@ -1,0 +1,38 @@
+classification_version: 1
+
+dimensions:
+  team:
+    rules:
+      - name: reader_team
+        priority: 100
+        match:
+          type: prefix
+          value: rdr_
+
+      - name: incentive_compensation
+        priority: 100
+        match:
+          type: prefix
+          value: ic_
+
+  operation:
+    rules:
+      - name: incentive_compensation
+        priority: 100
+        match:
+          type: regex
+          value: '^(rdr_|ic_)'
+
+  environment:
+    rules:
+      - name: production
+        priority: 100
+        match:
+          type: schema
+          value: prod
+
+      - name: development
+        priority: 100
+        match:
+          type: schema
+          value: dev

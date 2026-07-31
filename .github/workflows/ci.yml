@@ -1,0 +1,111 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  quality:
+    name: Quality gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version-file: .python-version
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Upgrade packaging tools
+        run: python -m pip install --upgrade pip
+
+      - name: Install project and development dependencies
+        run: python -m pip install --editable ".[dev]"
+
+      - name: Verify installed dependencies
+        run: python -m pip check
+
+      - name: Compile Python package
+        run: python -m compileall -q src/red_govern
+
+      - name: Run Ruff
+        run: python -m ruff check src tests
+
+      - name: Run MyPy
+        run: python -m mypy src
+
+      - name: Run tests
+        run: python -m pytest -q
+
+  package:
+    name: Package validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs:
+      - quality
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version-file: .python-version
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install package-build tools
+        run: python -m pip install --upgrade pip build twine
+
+      - name: Remove previous build artefacts
+        run: rm -rf build dist
+
+      - name: Build wheel and source distribution
+        run: python -m build
+
+      - name: Validate distribution metadata
+        run: python -m twine check --strict dist/*
+
+      - name: Display generated distributions
+        run: |
+          echo "Generated package files:"
+          ls -lh dist
+
+      - name: Install wheel in isolated environment
+        run: |
+          python -m venv "${RUNNER_TEMP}/red-govern-package-test"
+          "${RUNNER_TEMP}/red-govern-package-test/bin/python" \
+            -m pip install --upgrade pip
+          "${RUNNER_TEMP}/red-govern-package-test/bin/python" \
+            -m pip install dist/*.whl
+
+      - name: Verify installed package
+        run: |
+          "${RUNNER_TEMP}/red-govern-package-test/bin/python" \
+            -m pip check
+          "${RUNNER_TEMP}/red-govern-package-test/bin/python" \
+            -c "import red_govern; print('Imported:', red_govern.__version__)"
+          "${RUNNER_TEMP}/red-govern-package-test/bin/red-govern" version
+          "${RUNNER_TEMP}/red-govern-package-test/bin/red-govern" --help
