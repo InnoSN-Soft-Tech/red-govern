@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "red-govern"
-version = "0.1.0a1"
+version = "0.1.0a2"
 description = "Local-first governance and operational intelligence for Amazon Redshift."
 readme = "README.md"
 requires-python = ">=3.10"
