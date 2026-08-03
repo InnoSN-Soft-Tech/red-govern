@@ -1,0 +1,3 @@
+# Documentation build dependencies.
+# Keep Material for MkDocs within its current major release.
+mkdocs-material==9.*
