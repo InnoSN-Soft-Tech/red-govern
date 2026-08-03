@@ -2,6 +2,14 @@ name: Documentation
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
+      - "requirements-docs.txt"
+      - ".github/workflows/docs.yml"
 
 permissions:
   contents: read

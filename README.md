@@ -267,6 +267,7 @@ No permanent PyPI password or API token is stored in the repository.
 
 ## Project documentation
 
+- [Documentation website](https://innosn-soft-tech.github.io/red-govern/)
 - [Changelog](CHANGELOG.md)
 - [Contributing guide](CONTRIBUTING.md)
 - [Code of Conduct](CODE_OF_CONDUCT.md)
