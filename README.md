@@ -2,7 +2,7 @@
 
 Local-first governance and operational intelligence for Amazon Redshift.
 
-> **Project status:** Alpha (`0.1.0a1`).
+> **Project status:** Alpha (`0.1.0a2`).
 > Red-Govern is under active development. Commands, configuration fields, and
 > report formats may change before the first stable release.
 
@@ -80,7 +80,7 @@ red-govern --help
 
 ### Install from PyPI
 
-After the first public release is published:
+Install the latest published release from PyPI:
 
 ```bash
 python -m pip install red-govern

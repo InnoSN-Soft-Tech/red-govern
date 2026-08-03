@@ -10,6 +10,35 @@ alpha, functionality and interfaces may change between releases.
 
 No unreleased changes have been recorded yet.
 
+## 0.1.0a2 - 2026-08-03
+
+Alpha hardening release focused on safer Amazon Redshift validation and secure
+local outputs.
+
+### Fixed
+
+- Hardened capability probing across Redshift Serverless and provisioned
+  deployments.
+- Distinguished unavailable, missing, and permission-restricted Redshift system
+  relations.
+- Fixed SVV table-inventory alias handling.
+- Corrected skew-threshold semantics for SYS percentage values and legacy ratio
+  values.
+- Sanitised XML-invalid control characters before writing Excel workbooks.
+- Normalised ANSI-styled CLI output in regression tests.
+
+### Security
+
+- Applied owner-only (`0600`) permissions to local configuration, history, JSON,
+  and Excel output files.
+
+### Validation
+
+- Added regression coverage for the repaired behaviour.
+- Validated 117 tests in normal and forced-colour CI-style execution.
+- Rebuilt and validated the wheel and source distribution before publication.
+- Published through GitHub Actions and PyPI OIDC Trusted Publishing.
+
 ## 0.1.0a1 - 2026-07-31
 
 Initial alpha release of Red-Govern.
