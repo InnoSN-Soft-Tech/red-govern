@@ -84,3 +84,13 @@ def test_running_query_definitions_are_registered() -> None:
         stv_definition.purpose
         == QueryPurpose.RUNNING_QUERIES
     )
+
+
+def test_svv_inventory_uses_redshift_table_catalog_column() -> None:
+    """SVV inventory should use the real Redshift catalogue column."""
+    registry = build_builtin_registry()
+    query = registry.get("object_inventory_svv_v1")
+
+    assert "table_catalog AS table_database" in query.sql
+    assert "\n    table_database," not in query.sql
+    assert "ORDER BY\n    table_catalog" in query.sql

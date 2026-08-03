@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -18,6 +19,7 @@ from red_govern.capabilities import CapabilityReport
 from red_govern.classification import ClassificationResult
 from red_govern.collectors import ObjectInventoryResult
 from red_govern.exceptions import ReportError
+from red_govern.security.local_files import prepare_private_file
 
 HEADER_FILL = PatternFill(
     fill_type="solid",
@@ -43,6 +45,32 @@ SUCCESS_FILL = PatternFill(
     fill_type="solid",
     fgColor="D9EAD3",
 )
+
+
+_EXCEL_ILLEGAL_CHARACTERS = re.compile(
+    r"[\x00-\x08\x0B\x0C\x0E-\x1F]"
+)
+
+
+def _excel_safe_value(value: Any) -> Any:
+    """Remove control characters Excel cannot store in cells."""
+    if not isinstance(value, str):
+        return value
+
+    return _EXCEL_ILLEGAL_CHARACTERS.sub("", value)
+
+
+def _append_row(
+    worksheet: Worksheet,
+    values: list[Any] | tuple[Any, ...],
+) -> None:
+    """Append one row after sanitising all string values."""
+    worksheet.append(
+        [
+            _excel_safe_value(value)
+            for value in values
+        ]
+    )
 
 
 def _style_header_row(
@@ -260,11 +288,11 @@ def _build_executive_summary(
         ("Query text included", "No"),
     ]
 
-    worksheet.append([])
-    worksheet.append(["Metric", "Value"])
+    _append_row(worksheet, [])
+    _append_row(worksheet, ["Metric", "Value"])
 
     for metric, value in rows:
-        worksheet.append([metric, value])
+        _append_row(worksheet, [metric, value])
 
     _style_header_row(worksheet, row_number=3)
 
@@ -307,7 +335,7 @@ def _build_inventory_sheet(
         "Conflict",
     ]
 
-    worksheet.append(headers)
+    _append_row(worksheet, headers)
 
     classification_lookup = _classification_lookup(
         classification
@@ -326,7 +354,8 @@ def _build_inventory_sheet(
             {},
         )
 
-        worksheet.append(
+        _append_row(
+            worksheet,
             [
                 record.database_name,
                 record.schema_name,
@@ -366,7 +395,8 @@ def _build_breakdown_sheet(
     """Create a reusable quota-breakdown worksheet."""
     worksheet: Worksheet = workbook.create_sheet(title)
 
-    worksheet.append(
+    _append_row(
+        worksheet,
         [
             first_column,
             "Object Count",
@@ -375,7 +405,8 @@ def _build_breakdown_sheet(
     )
 
     for item in items:
-        worksheet.append(
+        _append_row(
+            worksheet,
             [
                 item.name,
                 item.count,
@@ -405,7 +436,8 @@ def _build_classification_sheets(
         "Classification"
     )
 
-    classification_sheet.append(
+    _append_row(
+        classification_sheet,
         [
             "Database",
             "Schema",
@@ -423,7 +455,8 @@ def _build_classification_sheets(
     unclassified_sheet = workbook.create_sheet(
         "Unclassified Objects"
     )
-    unclassified_sheet.append(
+    _append_row(
+        unclassified_sheet,
         [
             "Database",
             "Schema",
@@ -435,7 +468,8 @@ def _build_classification_sheets(
     conflict_sheet = workbook.create_sheet(
         "Classification Conflicts"
     )
-    conflict_sheet.append(
+    _append_row(
+        conflict_sheet,
         [
             "Database",
             "Schema",
@@ -449,7 +483,8 @@ def _build_classification_sheets(
     if classification is not None:
         for item in classification.objects:
             for dimension in item.dimensions:
-                classification_sheet.append(
+                _append_row(
+                    classification_sheet,
                     [
                         item.record.database_name,
                         item.record.schema_name,
@@ -467,7 +502,8 @@ def _build_classification_sheets(
                 )
 
                 if dimension.conflict:
-                    conflict_sheet.append(
+                    _append_row(
+                        conflict_sheet,
                         [
                             item.record.database_name,
                             item.record.schema_name,
@@ -481,7 +517,8 @@ def _build_classification_sheets(
                     )
 
             if item.unclassified:
-                unclassified_sheet.append(
+                _append_row(
+                    unclassified_sheet,
                     [
                         item.record.database_name,
                         item.record.schema_name,
@@ -521,7 +558,8 @@ def _build_capabilities_sheet(
     """Create the Redshift-capabilities worksheet."""
     worksheet: Worksheet = workbook.create_sheet("Capabilities")
 
-    worksheet.append(
+    _append_row(
+        worksheet,
         [
             "Relation",
             "Family",
@@ -532,7 +570,8 @@ def _build_capabilities_sheet(
     )
 
     for view in capabilities.views:
-        worksheet.append(
+        _append_row(
+            worksheet,
             [
                 view.relation,
                 view.family.value,
@@ -557,13 +596,13 @@ def _build_privacy_sheet(
     """Create the privacy declaration worksheet."""
     worksheet: Worksheet = workbook.create_sheet("Privacy")
 
-    worksheet.append(["Control", "Effective Value"])
-    worksheet.append(["Local-first operation", True])
-    worksheet.append(["Telemetry", False])
-    worksheet.append(["External transmission", False])
-    worksheet.append(["Credentials included", False])
-    worksheet.append(["Query text included", False])
-    worksheet.append(["Customer rows scanned", False])
+    _append_row(worksheet, ["Control", "Effective Value"])
+    _append_row(worksheet, ["Local-first operation", True])
+    _append_row(worksheet, ["Telemetry", False])
+    _append_row(worksheet, ["External transmission", False])
+    _append_row(worksheet, ["Credentials included", False])
+    _append_row(worksheet, ["Query text included", False])
+    _append_row(worksheet, ["Customer rows scanned", False])
 
     _style_header_row(worksheet)
     _auto_size_columns(worksheet)
@@ -649,10 +688,7 @@ def write_excel_report(
         )
 
     try:
-        output_path.parent.mkdir(
-            parents=True,
-            exist_ok=True,
-        )
+        prepare_private_file(output_path)
         workbook.save(output_path)
     except OSError as exc:
         raise ReportError(

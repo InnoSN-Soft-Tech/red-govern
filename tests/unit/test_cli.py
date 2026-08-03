@@ -1,5 +1,7 @@
 """Tests for the Red-Govern command-line interface."""
 
+import re
+
 from typer.testing import CliRunner
 
 from red_govern import __version__
@@ -7,13 +9,25 @@ from red_govern.cli.app import app
 
 runner = CliRunner()
 
+_ANSI_ESCAPE_PATTERN = re.compile(
+    r"\x1b\[[0-?]*[ -/]*[@-~]"
+)
+
+
+def _strip_ansi(value: str) -> str:
+    """Remove terminal styling from captured CLI output."""
+    return _ANSI_ESCAPE_PATTERN.sub("", value)
+
 
 def test_version_command() -> None:
     """The version command should report the installed package version."""
     result = runner.invoke(app, ["version"])
 
     assert result.exit_code == 0
-    assert f"Red-Govern {__version__}" in result.stdout
+
+    plain_output = _strip_ansi(result.stdout)
+
+    assert f"Red-Govern {__version__}" in plain_output
 
 def test_doctor_command() -> None:
     """The doctor command should return the local diagnostic."""
@@ -410,3 +424,18 @@ def test_query_breakdown_requires_authentication(
         "Query-breakdown analysis failed"
         in result.stdout
     )
+
+
+def test_query_performance_help_distinguishes_skew_units() -> None:
+    """Performance help should expose both skew unit types."""
+    result = runner.invoke(
+        app,
+        ["queries", "performance", "--help"],
+    )
+
+    assert result.exit_code == 0
+
+    plain_output = _strip_ansi(result.stdout)
+
+    assert "--skew-ratio" in plain_output
+    assert "--skew-percent" in plain_output

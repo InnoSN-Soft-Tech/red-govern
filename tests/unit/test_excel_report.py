@@ -30,7 +30,10 @@ from red_govern.reports import (
 )
 
 
-def build_inventory() -> ObjectInventoryResult:
+def build_inventory(
+    *,
+    object_name: str = "orders",
+) -> ObjectInventoryResult:
     """Build a synthetic inventory for Excel testing."""
     collected_at = datetime.now(timezone.utc)
 
@@ -55,7 +58,7 @@ def build_inventory() -> ObjectInventoryResult:
     record = ObjectInventoryRecord(
         database_name="analytics",
         schema_name="sales",
-        object_name="orders",
+        object_name=object_name,
         object_type=DatabaseObjectType.TABLE,
         source_family=ViewFamily.SVV,
         source_query_id=query.query_id,
@@ -69,11 +72,14 @@ def build_inventory() -> ObjectInventoryResult:
     )
 
 
-def build_capabilities() -> CapabilityReport:
+def build_capabilities(
+    *,
+    server_version: str = "Redshift test",
+) -> CapabilityReport:
     """Build synthetic Redshift capabilities."""
     return CapabilityReport(
         deployment_type=DeploymentType.PROVISIONED,
-        server_version="Redshift test",
+        server_version=server_version,
         views=(),
     )
 
@@ -205,3 +211,47 @@ def test_existing_excel_report_is_protected(
             workbook,
             destination,
         )
+
+
+def test_excel_report_sanitises_illegal_control_characters(
+    tmp_path: Path,
+) -> None:
+    """Excel-bound metadata should have illegal controls removed."""
+    inventory = build_inventory(
+        object_name="orders\x01",
+    )
+
+    quota = analyse_object_quota(
+        inventory,
+        ObjectQuotaConfig(limit_override=100),
+    )
+
+    workbook = build_excel_workbook(
+        capabilities=build_capabilities(
+            server_version="Redshift test\x00",
+        ),
+        inventory=inventory,
+        quota=quota,
+    )
+
+    destination = tmp_path / "sanitised.xlsx"
+
+    result = write_excel_report(
+        workbook,
+        destination,
+    )
+
+    reopened = load_workbook(
+        result,
+        read_only=True,
+        data_only=True,
+    )
+
+    try:
+        executive_summary = reopened["Executive Summary"]
+        inventory_sheet = reopened["Object Inventory"]
+
+        assert executive_summary["B7"].value == "Redshift test"
+        assert inventory_sheet["C2"].value == "orders"
+    finally:
+        reopened.close()

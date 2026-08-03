@@ -1261,9 +1261,21 @@ def queries_performance(
         typer.Option(
             "--skew-ratio",
             min=1.0,
-            help="CPU, I/O or data-skew ratio considered high.",
+            help="Legacy CPU or I/O skew ratio considered high.",
         ),
     ] = 2.0,
+    skew_percent: Annotated[
+        float,
+        typer.Option(
+            "--skew-percent",
+            min=0.01,
+            max=100.0,
+            help=(
+                "SYS data or time skew percentage considered "
+                "high."
+            ),
+        ),
+    ] = 50.0,
     spill_blocks: Annotated[
         int,
         typer.Option(
@@ -1306,6 +1318,7 @@ def queries_performance(
             cpu_usage_percent=cpu_percent,
             skew_ratio=skew_ratio,
             spill_blocks=spill_blocks,
+            data_time_skew_percent=skew_percent,
             alert_count=alert_count,
         )
 
@@ -1377,8 +1390,12 @@ def queries_performance(
         f"{cpu_percent:.2f}%",
     )
     summary.add_row(
-        "Skew threshold",
+        "CPU/I/O skew ratio",
         f"{skew_ratio:.2f}",
+    )
+    summary.add_row(
+        "Data/time skew threshold",
+        f"{skew_percent:.2f}%",
     )
 
     console.print(

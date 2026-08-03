@@ -23,7 +23,7 @@ def build_builtin_registry() -> QueryRegistry:
             result_schema="object_inventory_v1",
             sql="""
 SELECT
-    table_database,
+    table_catalog AS table_database,
     table_schema,
     table_name,
     table_type
@@ -33,7 +33,7 @@ WHERE table_schema NOT IN (
     'information_schema'
 )
 ORDER BY
-    table_database,
+    table_catalog,
     table_schema,
     table_name
 """.strip(),

@@ -13,6 +13,7 @@ from red_govern.capabilities import CapabilityReport
 from red_govern.classification import ClassificationResult
 from red_govern.collectors import ObjectInventoryResult
 from red_govern.exceptions import ReportError
+from red_govern.security.local_files import prepare_private_file
 
 
 def _classification_lookup(
@@ -208,7 +209,7 @@ def write_json_report(
         )
 
     try:
-        output_path.parent.mkdir(parents=True, exist_ok=True)
+        prepare_private_file(output_path)
         output_path.write_text(
             json.dumps(
                 report,

@@ -7,6 +7,8 @@ from collections.abc import Iterator
 from contextlib import contextmanager
 from pathlib import Path
 
+from red_govern.security.local_files import prepare_private_file
+
 SCHEMA_VERSION = 1
 
 SCHEMA_SQL = """
@@ -67,7 +69,7 @@ def expand_database_path(path: Path) -> Path:
 def initialise_database(path: Path) -> Path:
     """Create the local history database and required schema."""
     database_path = expand_database_path(path)
-    database_path.parent.mkdir(parents=True, exist_ok=True)
+    prepare_private_file(database_path)
 
     with sqlite3.connect(database_path) as connection:
         connection.execute("PRAGMA foreign_keys = ON")

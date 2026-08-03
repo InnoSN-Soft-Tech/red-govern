@@ -1,6 +1,9 @@
 """Tests for Red-Govern capability detection models."""
 
-from red_govern.capabilities.detector import CapabilityReport
+from red_govern.capabilities.detector import (
+    CapabilityReport,
+    _relations_for_deployment,
+)
 from red_govern.capabilities.permissions import summarise_permissions
 from red_govern.capabilities.system_views import (
     DeploymentType,
@@ -62,3 +65,26 @@ def test_permission_summary() -> None:
     assert summary.accessible_relations == 1
     assert summary.inaccessible_relations == 1
     assert summary.missing_relations == 1
+
+
+def test_relations_are_filtered_by_configured_deployment() -> None:
+    """Deployment-specific probes should avoid irrelevant relations."""
+    serverless_relations = {
+        relation
+        for relation, _family in _relations_for_deployment(
+            DeploymentType.SERVERLESS
+        )
+    }
+    provisioned_relations = {
+        relation
+        for relation, _family in _relations_for_deployment(
+            DeploymentType.PROVISIONED
+        )
+    }
+
+    assert "pg_catalog.sys_serverless_usage" in serverless_relations
+    assert "pg_catalog.stl_query" not in serverless_relations
+    assert "pg_catalog.stv_recents" not in serverless_relations
+
+    assert "pg_catalog.sys_serverless_usage" not in provisioned_relations
+    assert "pg_catalog.stl_query" in provisioned_relations

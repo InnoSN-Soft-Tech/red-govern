@@ -1,5 +1,6 @@
 """Tests for Red-Govern configuration behaviour."""
 
+import stat
 from pathlib import Path
 
 import pytest
@@ -27,10 +28,12 @@ def test_write_and_load_default_config(tmp_path: Path) -> None:
     """A generated configuration should be loadable."""
     destination = tmp_path / "red-govern.yml"
 
-    write_default_config(destination)
+    result = write_default_config(destination)
     loaded = load_config(destination)
 
     assert destination.exists()
+    assert result == destination.resolve()
+    assert stat.S_IMODE(destination.stat().st_mode) == 0o600
     assert loaded.redshift.connection.port == 5439
     assert loaded.history.backend == "sqlite"
 

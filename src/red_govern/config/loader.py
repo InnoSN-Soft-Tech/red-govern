@@ -10,6 +10,7 @@ import yaml
 from red_govern.config.defaults import default_config_resource
 from red_govern.config.models import RedGovernConfig
 from red_govern.exceptions import ConfigurationError
+from red_govern.security.local_files import prepare_private_file
 
 
 def read_yaml(path: Path) -> dict[str, Any]:
@@ -59,18 +60,20 @@ def write_default_config(
     overwrite: bool = False,
 ) -> Path:
     """Write the packaged default configuration to a user-selected path."""
-    if destination.exists() and not overwrite:
+    output_path = destination.expanduser().resolve()
+
+    if output_path.exists() and not overwrite:
         raise ConfigurationError(
-            f"Configuration already exists: {destination}"
+            f"Configuration already exists: {output_path}"
         )
 
     try:
-        destination.parent.mkdir(parents=True, exist_ok=True)
+        prepare_private_file(output_path)
         content = default_config_resource().read_text(encoding="utf-8")
-        destination.write_text(content, encoding="utf-8")
+        output_path.write_text(content, encoding="utf-8")
     except OSError as exc:
         raise ConfigurationError(
-            f"Unable to write configuration file: {destination}"
+            f"Unable to write configuration file: {output_path}"
         ) from exc
 
-    return destination
+    return output_path

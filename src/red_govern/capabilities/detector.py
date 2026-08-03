@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+from contextlib import suppress
 from dataclasses import dataclass
+from typing import Any
 
 from red_govern.capabilities.system_views import (
     KNOWN_SYSTEM_RELATIONS,
@@ -29,26 +31,15 @@ class CapabilityReport:
         normalised = relation.lower()
 
         return any(
-            view.relation.lower() == normalised
-            and view.available
-            and view.accessible
+            view.relation.lower() == normalised and view.available and view.accessible
             for view in self.views
         )
 
     def family_available(self, family: ViewFamily) -> bool:
         """Return whether an accessible relation exists in a family."""
         return any(
-            view.family == family
-            and view.available
-            and view.accessible
-            for view in self.views
+            view.family == family and view.available and view.accessible for view in self.views
         )
-
-
-RELATION_PROBE_SQL = """
-SELECT
-    to_regclass(%s) IS NOT NULL AS relation_exists
-"""
 
 
 VERSION_SQL = """
@@ -56,48 +47,93 @@ SELECT version()
 """
 
 
-def _probe_relation(cursor: object, relation: str) -> SystemViewCapability:
-    """Probe whether a known relation exists and can be read."""
-    family = next(
-        known_family
-        for known_relation, known_family in KNOWN_SYSTEM_RELATIONS
-        if known_relation == relation
-    )
+_MISSING_RELATION_MARKERS = (
+    "does not exist",
+    "relation does not exist",
+    "relation not found",
+    "table does not exist",
+    "undefined table",
+)
+
+
+_SERVERLESS_ONLY_RELATIONS = frozenset(
+    {
+        "pg_catalog.sys_serverless_usage",
+    }
+)
+
+
+_PROVISIONED_ONLY_RELATIONS = frozenset(
+    {
+        "pg_catalog.stv_recents",
+        "pg_catalog.svl_query_metrics_summary",
+        "pg_catalog.stv_query_metrics",
+        "pg_catalog.stl_query",
+        "pg_catalog.stv_inflight",
+        "pg_catalog.svl_qlog",
+    }
+)
+
+
+def _relations_for_deployment(
+    deployment_type: DeploymentType | None,
+) -> tuple[tuple[str, ViewFamily], ...]:
+    """Return relations applicable to the configured deployment."""
+    if deployment_type is DeploymentType.SERVERLESS:
+        return tuple(
+            item for item in KNOWN_SYSTEM_RELATIONS if item[0] not in _PROVISIONED_ONLY_RELATIONS
+        )
+
+    if deployment_type is DeploymentType.PROVISIONED:
+        return tuple(
+            item for item in KNOWN_SYSTEM_RELATIONS if item[0] not in _SERVERLESS_ONLY_RELATIONS
+        )
+
+    return KNOWN_SYSTEM_RELATIONS
+
+
+def _safe_rollback(connection: Any) -> None:
+    """Rollback a failed capability probe without masking its error."""
+    with suppress(Exception):
+        connection.rollback()
+
+
+def _probe_relation(
+    connection: Any,
+    relation: str,
+    family: ViewFamily,
+) -> SystemViewCapability:
+    """Probe a fixed known relation using a harmless zero-row read.
+
+    Amazon Redshift does not reliably expose all system relations through
+    PostgreSQL relation-registry helpers such as to_regclass(). Directly
+    compiling a SELECT is therefore the most reliable existence and access
+    test.
+
+    Relation names come only from KNOWN_SYSTEM_RELATIONS and are not
+    user-controlled.
+    """
+    cursor = connection.cursor()
 
     try:
-        cursor.execute(RELATION_PROBE_SQL, (relation,))  # type: ignore[attr-defined]
-        row = cursor.fetchone()  # type: ignore[attr-defined]
-        available = bool(row and row[0])
+        cursor.execute(f"SELECT 1 FROM {relation} LIMIT 0")
     except Exception as exc:
-        return SystemViewCapability(
-            relation=relation,
-            family=family,
-            available=False,
-            accessible=False,
-            error=redact_text(str(exc)),
-        )
+        _safe_rollback(connection)
 
-    if not available:
-        return SystemViewCapability(
-            relation=relation,
-            family=family,
-            available=False,
-            accessible=False,
-        )
+        redacted_error = redact_text(str(exc))
+        normalised_error = redacted_error.lower()
 
-    try:
-        cursor.execute(  # type: ignore[attr-defined]
-            f"SELECT 1 FROM {relation} LIMIT 1"
-        )
-        cursor.fetchone()  # type: ignore[attr-defined]
-    except Exception as exc:
+        missing = any(marker in normalised_error for marker in _MISSING_RELATION_MARKERS)
+
         return SystemViewCapability(
             relation=relation,
             family=family,
-            available=True,
+            available=not missing,
             accessible=False,
-            error=redact_text(str(exc)),
+            error=redacted_error,
         )
+    finally:
+        cursor.close()
 
     return SystemViewCapability(
         relation=relation,
@@ -107,24 +143,33 @@ def _probe_relation(cursor: object, relation: str) -> SystemViewCapability:
     )
 
 
+def _configured_deployment_type(
+    config: RedshiftConfig,
+) -> DeploymentType | None:
+    """Return an explicit configured deployment type when present."""
+    configured = config.compatibility.deployment_type
+    value = getattr(configured, "value", configured)
+    normalised = str(value).lower()
+
+    if normalised == DeploymentType.SERVERLESS.value:
+        return DeploymentType.SERVERLESS
+
+    if normalised == DeploymentType.PROVISIONED.value:
+        return DeploymentType.PROVISIONED
+
+    return None
+
+
 def _infer_deployment_type(
     views: tuple[SystemViewCapability, ...],
 ) -> DeploymentType:
     """Infer deployment type from environment-specific relations."""
     serverless_usage = next(
-        (
-            view
-            for view in views
-            if view.relation == "pg_catalog.sys_serverless_usage"
-        ),
+        (view for view in views if view.relation == "pg_catalog.sys_serverless_usage"),
         None,
     )
 
-    if (
-        serverless_usage is not None
-        and serverless_usage.available
-        and serverless_usage.accessible
-    ):
+    if serverless_usage is not None and serverless_usage.available and serverless_usage.accessible:
         return DeploymentType.SERVERLESS
 
     provisioned_relations = {
@@ -134,9 +179,7 @@ def _infer_deployment_type(
     }
 
     if any(
-        view.relation in provisioned_relations
-        and view.available
-        and view.accessible
+        view.relation in provisioned_relations and view.available and view.accessible
         for view in views
     ):
         return DeploymentType.PROVISIONED
@@ -148,31 +191,36 @@ def detect_capabilities(
     config: RedshiftConfig,
 ) -> CapabilityReport:
     """Detect available Redshift system views and deployment indicators."""
+    configured_deployment_type = _configured_deployment_type(config)
+
     try:
         with redshift_connection(config) as connection:
-            cursor = connection.cursor()
+            version_cursor = connection.cursor()
 
             try:
-                cursor.execute(VERSION_SQL)
-                row = cursor.fetchone()
+                version_cursor.execute(VERSION_SQL)
+                row = version_cursor.fetchone()
                 server_version = str(row[0]) if row else "unknown"
-
-                views = tuple(
-                    _probe_relation(cursor, relation)
-                    for relation, _family in KNOWN_SYSTEM_RELATIONS
-                )
             finally:
-                cursor.close()
+                version_cursor.close()
+
+            views = tuple(
+                _probe_relation(
+                    connection,
+                    relation,
+                    family,
+                )
+                for relation, family in _relations_for_deployment(configured_deployment_type)
+            )
     except Exception as exc:
         if isinstance(exc, CapabilityDetectionError):
             raise
 
         raise CapabilityDetectionError(
-            "Unable to detect Redshift capabilities: "
-            f"{redact_text(str(exc))}"
+            f"Unable to detect Redshift capabilities: {redact_text(str(exc))}"
         ) from exc
 
-    deployment_type = _infer_deployment_type(views)
+    deployment_type = configured_deployment_type or _infer_deployment_type(views)
 
     return CapabilityReport(
         deployment_type=deployment_type,

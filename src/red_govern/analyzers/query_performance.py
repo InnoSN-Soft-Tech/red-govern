@@ -36,6 +36,7 @@ class QueryPerformanceThresholds:
     skew_ratio: float = 2.0
     spill_blocks: int = 1
     alert_count: int = 1
+    data_time_skew_percent: float = 50.0
 
     def __post_init__(self) -> None:
         """Reject zero or negative thresholds."""
@@ -47,6 +48,10 @@ class QueryPerformanceThresholds:
             ("skew_ratio", self.skew_ratio),
             ("spill_blocks", float(self.spill_blocks)),
             ("alert_count", float(self.alert_count)),
+            (
+                "data_time_skew_percent",
+                self.data_time_skew_percent,
+            ),
         )
 
         for name, value in values:
@@ -54,6 +59,11 @@ class QueryPerformanceThresholds:
                 raise ValueError(
                     f"{name} must be greater than zero."
                 )
+
+        if self.data_time_skew_percent > 100:
+            raise ValueError(
+                "data_time_skew_percent must not exceed 100."
+            )
 
 
 @dataclass(frozen=True, slots=True)
@@ -218,17 +228,15 @@ def analyse_query_performance(
             critical_multiplier=1.15,
         )
 
-        skew_metrics: tuple[
+        ratio_skew_metrics: tuple[
             tuple[str, float | None],
             ...,
         ] = (
             ("cpu_skew", record.cpu_skew),
             ("io_skew", record.io_skew),
-            ("data_skewness", record.data_skewness),
-            ("time_skewness", record.time_skewness),
         )
 
-        for metric_name, value in skew_metrics:
+        for metric_name, value in ratio_skew_metrics:
             _append_issue(
                 issues,
                 record=record,
@@ -236,6 +244,27 @@ def analyse_query_performance(
                 metric_name=metric_name,
                 value=value,
                 threshold=effective_thresholds.skew_ratio,
+            )
+
+        percentage_skew_metrics: tuple[
+            tuple[str, float | None],
+            ...,
+        ] = (
+            ("data_skewness", record.data_skewness),
+            ("time_skewness", record.time_skewness),
+        )
+
+        for metric_name, value in percentage_skew_metrics:
+            _append_issue(
+                issues,
+                record=record,
+                issue_type=QueryPerformanceIssueType.SKEW,
+                metric_name=metric_name,
+                value=value,
+                threshold=(
+                    effective_thresholds.data_time_skew_percent
+                ),
+                critical_multiplier=1.5,
             )
 
         _append_issue(

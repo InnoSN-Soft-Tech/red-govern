@@ -157,3 +157,30 @@ def test_invalid_threshold_is_rejected() -> None:
         QueryPerformanceThresholds(
             slow_query_ms=0,
         )
+
+
+def test_sys_skew_uses_percentage_threshold() -> None:
+    """SYS data and time skew should use percentage semantics."""
+    analysis = analyse_query_performance(
+        (
+            build_record(
+                data_skewness=49.0,
+                time_skewness=50.0,
+            ),
+        )
+    )
+
+    percentage_issues = tuple(
+        issue
+        for issue in analysis.issues
+        if issue.metric_name
+        in {"data_skewness", "time_skewness"}
+    )
+
+    assert len(percentage_issues) == 1
+    assert percentage_issues[0].metric_name == "time_skewness"
+    assert percentage_issues[0].threshold == 50.0
+    assert (
+        percentage_issues[0].severity
+        is QueryPerformanceSeverity.WARNING
+    )
