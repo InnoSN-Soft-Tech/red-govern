@@ -1,0 +1,122 @@
+name: Bug report
+description: Report a reproducible Red-Govern defect or compatibility problem.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a problem.
+
+        Do not include passwords, tokens, Redshift endpoints, AWS account IDs,
+        production query text, confidential object names, or personal data.
+        Security vulnerabilities and suspected data exposure must not be
+        reported through this public form.
+
+  - type: input
+    id: red_govern_version
+    attributes:
+      label: Red-Govern version
+      description: Run `red-govern version`.
+      placeholder: "0.1.0a2"
+    validations:
+      required: true
+
+  - type: input
+    id: python_version
+    attributes:
+      label: Python version
+      description: Run `python --version`.
+      placeholder: "Python 3.13.x"
+    validations:
+      required: true
+
+  - type: input
+    id: operating_system
+    attributes:
+      label: Operating system
+      placeholder: "macOS, Linux, or Windows and version"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: installation_method
+    attributes:
+      label: Installation method
+      options:
+        - PyPI
+        - Editable source installation
+        - Wheel or source distribution
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: redshift_deployment
+    attributes:
+      label: Redshift deployment
+      options:
+        - Redshift Serverless
+        - Provisioned Redshift
+        - Mocked or offline environment
+        - Not applicable
+        - Unknown
+    validations:
+      required: true
+
+  - type: textarea
+    id: command
+    attributes:
+      label: Command or operation
+      description: Provide a sanitised command and relevant options.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+      description: What did you expect Red-Govern to do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed behaviour
+      description: What happened instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: Use synthetic or fully sanitised information.
+      placeholder: |
+        1. Configure ...
+        2. Run ...
+        3. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Sanitised diagnostics
+      description: |
+        Include only redacted traceback or diagnostic output. Never attach an
+        unreviewed configuration, report, snapshot, or production log.
+      render: text
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      options:
+        - label: I removed credentials, endpoints, account identifiers, confidential object names, query text, and personal data.
+          required: true
+        - label: This report is not a vulnerability or suspected data-exposure report.
+          required: true
+        - label: I reviewed SUPPORT.md and searched existing issues.
+          required: true

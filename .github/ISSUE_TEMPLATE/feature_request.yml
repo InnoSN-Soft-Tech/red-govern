@@ -1,0 +1,80 @@
+name: Feature request
+description: Propose a focused Red-Govern governance or operational capability.
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the governance or operational problem rather than only the
+        desired implementation. Do not include confidential Redshift metadata,
+        production query text, credentials, customer data, or personal data.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: What governance or operational problem needs to be addressed?
+    validations:
+      required: true
+
+  - type: textarea
+    id: users
+    attributes:
+      label: Intended users
+      description: Who would use this capability and in what workflow?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_behaviour
+    attributes:
+      label: Proposed behaviour
+      description: Describe the expected command, behaviour, or user experience.
+    validations:
+      required: true
+
+  - type: textarea
+    id: inputs_outputs
+    attributes:
+      label: Expected inputs and outputs
+      description: Use synthetic examples where helpful.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: compatibility
+    attributes:
+      label: Redshift compatibility
+      multiple: true
+      options:
+        - Redshift Serverless
+        - Provisioned Redshift
+        - Both deployment types
+        - Not deployment-specific
+        - Unknown
+    validations:
+      required: true
+
+  - type: textarea
+    id: privacy_security
+    attributes:
+      label: Privacy and security considerations
+      description: Explain sensitive-data, credential, permission, or local-output implications.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe current workarounds or other approaches.
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      options:
+        - label: I removed confidential operational information and personal data.
+          required: true
+        - label: I reviewed existing issues and the current command help.
+          required: true

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability or suspected data exposure
+    url: https://github.com/InnoSN-Soft-Tech/red-govern/security/policy
+    about: Follow the private reporting guidance in the security policy.
+  - name: Usage and support guidance
+    url: https://github.com/InnoSN-Soft-Tech/red-govern/blob/main/SUPPORT.md
+    about: Review supported requests, diagnostics, and redaction requirements.
