@@ -8,7 +8,19 @@ alpha, functionality and interfaces may change between releases.
 
 ## Unreleased
 
-No unreleased changes have been recorded yet.
+### Packaging
+
+- Corrected the explicit Hatch source-distribution license paths to reference
+  `LICENSE.md` and `COMMERCIAL_LICENSE.md`.
+- Added a Python 3.10-compatible `tomli` fallback for the distribution
+  validator.
+
+### Validation
+
+- Added wheel and source-distribution checks for legal-file presence,
+  `Metadata-Version`, `License-Expression`, and `License-File` metadata.
+- Integrated distribution-content validation into the CI and release
+  workflows.
 
 ## 0.1.0a2 - 2026-08-03
 
