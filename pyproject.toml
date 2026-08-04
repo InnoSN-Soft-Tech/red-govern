@@ -94,6 +94,7 @@ dev = [
     "pre-commit>=4,<5",
     "types-PyYAML>=6,<7",
     "types-openpyxl>=3.1.5,<4",
+    "tomli>=2,<3; python_version < '3.11'",
 ]
 
 [project.scripts]
@@ -125,8 +126,9 @@ include = [
     "/docs",
     "/examples",
     "/README.md",
-    "/LICENSE",
+    "/LICENSE.md",
     "/NOTICE",
+    "/COMMERCIAL_LICENSE.md",
     "/CHANGELOG.md",
     "/DISCLAIMER.md",
     "/TRADEMARKS.md",

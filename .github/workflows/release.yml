@@ -75,6 +75,9 @@ jobs:
       - name: Validate distribution metadata
         run: python -m twine check --strict dist/*
 
+      - name: Validate distribution contents
+        run: python scripts/validate_distribution_contents.py dist
+
       - name: Inspect generated distributions
         run: |
           echo "Generated release distributions:"
