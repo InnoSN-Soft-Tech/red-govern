@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import sqlite3
 from collections.abc import Iterator
-from contextlib import contextmanager
+from contextlib import closing, contextmanager
 from pathlib import Path
 
 from red_govern.security.local_files import prepare_private_file
@@ -71,7 +71,7 @@ def initialise_database(path: Path) -> Path:
     database_path = expand_database_path(path)
     prepare_private_file(database_path)
 
-    with sqlite3.connect(database_path) as connection:
+    with closing(sqlite3.connect(database_path)) as connection:
         connection.execute("PRAGMA foreign_keys = ON")
         connection.executescript(SCHEMA_SQL)
 

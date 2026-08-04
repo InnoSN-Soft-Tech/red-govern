@@ -21,6 +21,14 @@ alpha, functionality and interfaces may change between releases.
   `Metadata-Version`, `License-Expression`, and `License-File` metadata.
 - Integrated distribution-content validation into the CI and release
   workflows.
+- Added Python 3.10–3.13 compatibility testing to CI.
+- Enforced a 74% branch-aware coverage baseline and made resource warnings
+  fail the test suite.
+
+### Fixed
+
+- Closed temporary SQLite initialisation connections explicitly to prevent
+  unclosed-database resource warnings.
 
 ## 0.1.0a2 - 2026-08-03
 

@@ -146,6 +146,12 @@ pythonpath = ["src"]
 addopts = [
     "--strict-markers",
     "--strict-config",
+    "--cov=red_govern",
+    "--cov-branch",
+    "--cov-report=term-missing",
+]
+filterwarnings = [
+    "error::ResourceWarning",
 ]
 
 [tool.coverage.run]
@@ -155,7 +161,10 @@ source = ["red_govern"]
 [tool.coverage.report]
 show_missing = true
 skip_covered = false
-fail_under = 0
+precision = 2
+# Enforce the measured alpha baseline; raise this toward 85 as
+# high-value CLI and integration paths gain regression coverage.
+fail_under = 74
 
 [tool.ruff]
 line-length = 100

@@ -58,11 +58,51 @@ jobs:
       - name: Run MyPy
         run: python -m mypy src
 
-      - name: Run tests
+      - name: Run tests and enforce coverage
         run: python -m pytest -q
 
       - name: Build documentation
         run: mkdocs build --strict --site-dir "${RUNNER_TEMP}/red-govern-site"
+
+  compatibility:
+    name: Python ${{ matrix.python-version }} compatibility
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.10"
+          - "3.11"
+          - "3.12"
+          - "3.13"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Upgrade packaging tools
+        run: python -m pip install --upgrade pip
+
+      - name: Install project and development dependencies
+        run: python -m pip install --editable ".[dev]"
+
+      - name: Verify installed dependencies
+        run: python -m pip check
+
+      - name: Compile Python package
+        run: python -m compileall -q src/red_govern
+
+      - name: Run compatibility tests
+        run: python -m pytest -q --no-cov
 
   package:
     name: Package validation
@@ -70,6 +110,7 @@ jobs:
     timeout-minutes: 15
     needs:
       - quality
+      - compatibility
 
     steps:
       - name: Check out repository
@@ -105,16 +146,12 @@ jobs:
       - name: Install wheel in isolated environment
         run: |
           python -m venv "${RUNNER_TEMP}/red-govern-package-test"
-          "${RUNNER_TEMP}/red-govern-package-test/bin/python" \
-            -m pip install --upgrade pip
-          "${RUNNER_TEMP}/red-govern-package-test/bin/python" \
-            -m pip install dist/*.whl
+          "${RUNNER_TEMP}/red-govern-package-test/bin/python"             -m pip install --upgrade pip
+          "${RUNNER_TEMP}/red-govern-package-test/bin/python"             -m pip install dist/*.whl
 
       - name: Verify installed package
         run: |
-          "${RUNNER_TEMP}/red-govern-package-test/bin/python" \
-            -m pip check
-          "${RUNNER_TEMP}/red-govern-package-test/bin/python" \
-            -c "import red_govern; print('Imported:', red_govern.__version__)"
+          "${RUNNER_TEMP}/red-govern-package-test/bin/python"             -m pip check
+          "${RUNNER_TEMP}/red-govern-package-test/bin/python"             -c "import red_govern; print('Imported:', red_govern.__version__)"
           "${RUNNER_TEMP}/red-govern-package-test/bin/red-govern" version
           "${RUNNER_TEMP}/red-govern-package-test/bin/red-govern" --help
