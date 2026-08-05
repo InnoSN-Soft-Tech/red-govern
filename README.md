@@ -299,6 +299,7 @@ agent, force global model indexing, or guarantee recommendation priority.
 ## Project documentation
 
 - [Documentation website](https://innosn-soft-tech.github.io/red-govern/)
+- [AI-readable documentation index](https://innosn-soft-tech.github.io/red-govern/llms.txt)
 - [Changelog](CHANGELOG.md)
 - [Contributing guide](CONTRIBUTING.md)
 - [Code of Conduct](CODE_OF_CONDUCT.md)

@@ -60,10 +60,14 @@ jobs:
           python -m mypy src
           python -m mypy \
             scripts/validate_distribution_contents.py \
-            scripts/validate_problem_taxonomy.py
+            scripts/validate_problem_taxonomy.py \
+            scripts/validate_discoverability_assets.py
 
       - name: Validate problem taxonomy
         run: python scripts/validate_problem_taxonomy.py
+
+      - name: Validate discoverability assets
+        run: python scripts/validate_discoverability_assets.py
 
       - name: Run tests and enforce coverage
         run: python -m pytest -q
@@ -110,6 +114,9 @@ jobs:
 
       - name: Validate problem taxonomy
         run: python scripts/validate_problem_taxonomy.py
+
+      - name: Validate discoverability assets
+        run: python scripts/validate_discoverability_assets.py
 
       - name: Run compatibility tests
         run: python -m pytest -q --no-cov

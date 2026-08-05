@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  {{ super() }}
+  {% set red_govern_title = page.title ~ " — " ~ config.site_name if page and page.title else config.site_name %}
+  {% set red_govern_url = page.canonical_url if page and page.canonical_url else config.site_url %}
+
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="alternate" type="text/markdown" href="{{ config.site_url }}/llms.txt" title="Red-Govern llms.txt">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Red-Govern">
+  <meta property="og:title" content="{{ red_govern_title }}">
+  <meta property="og:description" content="{{ config.site_description }}">
+  <meta property="og:url" content="{{ red_govern_url }}">
+  <meta property="og:image" content="{{ config.site_url }}/assets/red-govern-social-card.png">
+  <meta property="og:image:secure_url" content="{{ config.site_url }}/assets/red-govern-social-card.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Red-Govern — Amazon Redshift governance and operational intelligence">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ red_govern_title }}">
+  <meta name="twitter:description" content="{{ config.site_description }}">
+  <meta name="twitter:image" content="{{ config.site_url }}/assets/red-govern-social-card.png">
+  <meta name="twitter:image:alt" content="Red-Govern — Amazon Redshift governance and operational intelligence">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Red-Govern",
+    "alternateName": "red-govern",
+    "description": "Local-first governance and operational intelligence for Amazon Redshift.",
+    "applicationCategory": "DeveloperApplication",
+    "applicationSubCategory": "Database governance and monitoring",
+    "operatingSystem": "Linux, macOS, Windows",
+    "softwareVersion": "0.1.0a3",
+    "softwareRequirements": "Python 3.10 or later; Amazon Redshift access is required for live inspection.",
+    "url": "https://innosn-soft-tech.github.io/red-govern/",
+    "downloadUrl": "https://pypi.org/project/red-govern/",
+    "installUrl": "https://pypi.org/project/red-govern/",
+    "image": "https://innosn-soft-tech.github.io/red-govern/assets/red-govern-social-card.png",
+    "isAccessibleForFree": true,
+    "license": "https://github.com/InnoSN-Soft-Tech/red-govern/blob/main/LICENSE.md",
+    "sameAs": [
+      "https://github.com/InnoSN-Soft-Tech/red-govern",
+      "https://pypi.org/project/red-govern/"
+    ],
+    "featureList": [
+      "Amazon Redshift capability detection",
+      "Object inventory",
+      "Configured quota-pressure analysis",
+      "Rule-based object classification",
+      "Privacy and safety auditing",
+      "Query-workload inspection",
+      "Local snapshots and change comparison",
+      "Local governance reports"
+    ],
+    "publisher": {
+      "@type": "Organization",
+      "name": "InnoSN Soft Tech",
+      "url": "https://snsoft.tech/"
+    }
+  }
+  </script>
+{% endblock %}

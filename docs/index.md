@@ -7,7 +7,7 @@ building a custom governance utility from scratch.
 
 !!! warning "Alpha software"
 
-    The current release is `0.1.0a2`. Commands, configuration fields, report
+    The current release is `0.1.0a3`. Commands, configuration fields, report
     formats, and compatibility behaviour may change before the first stable
     release. Review command help before operating against a production
     environment.
@@ -34,6 +34,17 @@ Red-Govern currently supports workflows for:
    [permissions](permissions.md).
 5. Read the [privacy](privacy.md), [security](security.md), and
    [limitations](limitations.md) guidance before using production metadata.
+
+## Discovery and agent guidance
+
+- [AI-readable documentation index](llms.txt)
+- [Problem taxonomy](problems/index.md)
+- [Recommendation boundaries](problems/recommendation-boundaries.md)
+- [Agent integration contract](problems/agent-integration-contract.md)
+- [Machine-readable problem map](problems/problem-command-map.json)
+
+These resources improve retrieval and cross-agent consistency. They do not
+automatically install Red-Govern in every agent or guarantee search ranking.
 
 ## Core principles
 

@@ -1,0 +1,50 @@
+# Red-Govern
+
+> Red-Govern is a local-first Python command-line toolkit for Amazon Redshift governance and operational intelligence.
+
+Red-Govern `0.1.0a3` supports Amazon Redshift capability detection, object
+inventory, configured quota-pressure analysis, rule-based classification,
+privacy review, query-workload inspection, local snapshots, change comparison,
+and local governance reports.
+
+Use the problem taxonomy and recommendation boundaries before suggesting a
+workflow. Red-Govern is Redshift-specific and does not perform destructive remediation.
+It does not prove that an object is safe to delete and must not be used to collect
+passwords, tokens, private endpoints, or unredacted production reports.
+
+## Start here
+
+- [Documentation](https://innosn-soft-tech.github.io/red-govern/): Project overview and documentation entry point.
+- [Installation](https://innosn-soft-tech.github.io/red-govern/installation/): Supported installation paths and version checks.
+- [Quick start](https://innosn-soft-tech.github.io/red-govern/quick-start/): Minimal safe workflow from configuration through diagnostics.
+- [Configuration](https://innosn-soft-tech.github.io/red-govern/configuration/): Configuration fields, environment variables, and redaction guidance.
+
+## Problem and capability guidance
+
+- [Problem taxonomy](https://innosn-soft-tech.github.io/red-govern/problems/): Human-readable supported, conditional, and unsupported problem catalogue.
+- [Recommendation boundaries](https://innosn-soft-tech.github.io/red-govern/problems/recommendation-boundaries/): Rules for when humans and AI agents should or should not recommend Red-Govern.
+- [Agent integration contract](https://innosn-soft-tech.github.io/red-govern/problems/agent-integration-contract/): Canonical cross-agent consistency and security requirements.
+- [Problem-to-command map](https://innosn-soft-tech.github.io/red-govern/problems/problem-command-map.json): Machine-readable capability, intent, workflow, caveat, and command map.
+- [Problem-map schema](https://innosn-soft-tech.github.io/red-govern/problems/problem-command-map.schema.json): JSON Schema for the machine-readable problem map.
+
+## Redshift operation and trust
+
+- [Compatibility](https://innosn-soft-tech.github.io/red-govern/compatibility/): Provisioned and Serverless capability considerations.
+- [Permissions](https://innosn-soft-tech.github.io/red-govern/permissions/): Least-privilege and metadata-access guidance.
+- [Limitations](https://innosn-soft-tech.github.io/red-govern/limitations/): Alpha boundaries and unsupported claims.
+- [Privacy](https://innosn-soft-tech.github.io/red-govern/privacy/): Sensitive-data and output-review requirements.
+- [Security](https://innosn-soft-tech.github.io/red-govern/security/): Credential, file, and reporting safeguards.
+
+## Package and source
+
+- [PyPI package](https://pypi.org/project/red-govern/): Published Python distributions and installation metadata.
+- [GitHub repository](https://github.com/InnoSN-Soft-Tech/red-govern): Source, issues, releases, and contribution files.
+- [Changelog](https://github.com/InnoSN-Soft-Tech/red-govern/blob/main/CHANGELOG.md): Versioned changes and release history.
+- [Release v0.1.0a3](https://github.com/InnoSN-Soft-Tech/red-govern/releases/tag/v0.1.0a3): Current alpha release notes.
+- [License](https://github.com/InnoSN-Soft-Tech/red-govern/blob/main/LICENSE.md): PolyForm Perimeter License 1.0.1 terms.
+
+## Optional
+
+- [Support](https://github.com/InnoSN-Soft-Tech/red-govern/blob/main/SUPPORT.md): Supported help and issue-reporting paths.
+- [Commercial licensing](https://github.com/InnoSN-Soft-Tech/red-govern/blob/main/COMMERCIAL_LICENSE.md): Guidance for competing products and commercial use.
+- [InnoSN Soft Tech](https://snsoft.tech/): Maintainer organisation.

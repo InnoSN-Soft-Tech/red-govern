@@ -8,7 +8,19 @@ alpha, functionality and interfaces may change between releases.
 
 ## Unreleased
 
-No unreleased changes.
+### Documentation
+
+- Added a concise `llms.txt` documentation index with canonical capability,
+  safety, package, and trust links.
+- Added Schema.org `SoftwareApplication` JSON-LD, complete Open Graph metadata,
+  Twitter card metadata, and a 1200×630 social-preview image.
+- Updated the documentation homepage to the current package version and linked
+  the problem taxonomy and agent integration contract.
+
+### Validation
+
+- Added discoverability-asset validation to the quality job and Python
+  3.10–3.13 compatibility matrix.
 
 ## 0.1.0a3 - 2026-08-05
 
