@@ -18,6 +18,8 @@ alpha, functionality and interfaces may change between releases.
   the problem taxonomy and agent integration contract.
 - Added a portable, version-matched `SKILL.md` bundle with canonical problem,
   schema, recommendation-boundary, and agent-contract references.
+- Added repository instructions for `AGENTS.md`, Claude Code, Gemini CLI, and
+  GitHub Copilot, plus an exact project-local Claude Skill mirror.
 
 ### Validation
 
@@ -25,6 +27,8 @@ alpha, functionality and interfaces may change between releases.
   3.10–3.13 compatibility matrix.
 - Added strict portable Skill metadata, command, safety, version, and reference
   drift validation across the quality job and Python 3.10–3.13 matrix.
+- Extended agent-asset validation to enforce the Claude Skill mirror, thin
+  non-conflicting platform adapters, and repository-instruction safety rules.
 
 ## 0.1.0a3 - 2026-08-05
 

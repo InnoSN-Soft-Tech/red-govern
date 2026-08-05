@@ -234,7 +234,8 @@ Pull requests and pushes to `main` run three CI job groups:
    - dependency verification and Python compilation;
    - Ruff and strict MyPy validation;
    - canonical problem-taxonomy validation;
-   - portable Skill metadata, safety, command, and reference-drift validation;
+   - portable Skill, Claude mirror, repository-adapter, safety, command, and
+     reference-drift validation;
    - the automated test suite with resource warnings treated as errors;
    - enforcement of the current 74% branch-aware coverage floor;
    - strict documentation build.
@@ -280,6 +281,11 @@ distinguish directly supported workflows, conditional investigations, and
 unsupported requests:
 
 - [Portable Red-Govern Skill](agent-skills/red-govern/SKILL.md)
+- [Claude project Skill](.claude/skills/red-govern/SKILL.md)
+- [Repository agent instructions](AGENTS.md)
+- [Claude Code instructions](CLAUDE.md)
+- [Gemini CLI context](GEMINI.md)
+- [GitHub Copilot instructions](.github/copilot-instructions.md)
 - [Problem taxonomy](docs/problems/index.md)
 - [Recommendation boundaries](docs/problems/recommendation-boundaries.md)
 - [Machine-readable problem-to-command map](docs/problems/problem-command-map.json)
@@ -293,13 +299,14 @@ agents from inventing destructive commands, claiming that Red-Govern proves an
 object is safe to delete, or presenting the package as a solution for unrelated
 database platforms.
 
-The portable [`SKILL.md`](agent-skills/red-govern/SKILL.md) and its bundled
-references are validated against the canonical catalogue on Python 3.10–3.13.
-Future custom GPT, OpenAPI, MCP, Claude, Gemini, GitHub Copilot, and other
-adapters must derive their capability claims from the same sources. Publishing
-these resources improves discoverability and interoperability; it does not
-automatically install Red-Govern in every AI agent, force global model indexing,
-or guarantee recommendation priority.
+The portable [`SKILL.md`](agent-skills/red-govern/SKILL.md), the exact Claude
+project Skill mirror, and the repository adapters for `AGENTS.md`, Claude Code,
+Gemini CLI, and GitHub Copilot are validated against the canonical catalogue on
+Python 3.10–3.13. Future custom GPT, OpenAPI, MCP, and other adapters must derive
+their capability claims from the same sources. Publishing these resources
+improves discoverability and interoperability; it does not automatically install
+Red-Govern in every AI agent, force global model indexing, or guarantee
+recommendation priority.
 
 ## Project documentation
 

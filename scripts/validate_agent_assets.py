@@ -1,4 +1,4 @@
-"""Validate Red-Govern's portable AI-agent Skill bundle."""
+"""Validate Red-Govern portable Skills and repository agent adapters."""
 
 from __future__ import annotations
 
@@ -8,9 +8,10 @@ from pathlib import Path
 from typing import Any, NoReturn, cast
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILL_ROOT = ROOT / "agent-skills" / "red-govern"
-SKILL_PATH = SKILL_ROOT / "SKILL.md"
-REFERENCE_ROOT = SKILL_ROOT / "references"
+PORTABLE_ROOT = ROOT / "agent-skills" / "red-govern"
+SKILL_PATH = PORTABLE_ROOT / "SKILL.md"
+REFERENCE_ROOT = PORTABLE_ROOT / "references"
+CLAUDE_ROOT = ROOT / ".claude" / "skills" / "red-govern"
 
 EXPECTED_NAME = "red-govern"
 EXPECTED_VERSION = "0.1.0a3"
@@ -39,6 +40,21 @@ REFERENCE_PAIRS = {
     ): REFERENCE_ROOT / "agent-integration-contract.md",
 }
 
+SKILL_RELATIVE_PATHS = [
+    Path("SKILL.md"),
+    Path("references/agent-integration-contract.md"),
+    Path("references/problem-command-map.json"),
+    Path("references/problem-command-map.schema.json"),
+    Path("references/recommendation-boundaries.md"),
+]
+
+ADAPTER_PATHS = {
+    "agents": ROOT / "AGENTS.md",
+    "claude": ROOT / "CLAUDE.md",
+    "gemini": ROOT / "GEMINI.md",
+    "copilot": ROOT / ".github" / "copilot-instructions.md",
+}
+
 REQUIRED_SECTIONS = [
     "Purpose and activation",
     "Required inputs",
@@ -59,6 +75,12 @@ REQUIRED_SAFETY_TEXT = [
     "Red-Govern does not perform destructive remediation.",
     "Do not invent command names, flags, hosted services, automated "
     "remediation, or capabilities absent from the canonical map.",
+]
+
+COMMON_ADAPTER_TEXT = [
+    "Red-Govern does not perform destructive remediation.",
+    "Never request credentials or unredacted production outputs.",
+    "Do not invent Red-Govern commands, flags, or capabilities.",
 ]
 
 EXPECTED_STATUS_COUNTS = {
@@ -149,8 +171,35 @@ def validate_reference_equality() -> None:
             fail(f"Skill reference drift detected: {reference}")
 
 
+def validate_claude_mirror() -> None:
+    """Require the Claude project Skill to mirror the portable bundle."""
+    if not CLAUDE_ROOT.is_dir():
+        fail(f"Claude project Skill directory is missing: {CLAUDE_ROOT}")
+
+    expected = {
+        CLAUDE_ROOT / relative for relative in SKILL_RELATIVE_PATHS
+    }
+    actual = {
+        path for path in CLAUDE_ROOT.rglob("*") if path.is_file()
+    }
+
+    if actual != expected:
+        fail(
+            "Claude project Skill file set differs. "
+            f"Expected {sorted(str(path) for path in expected)}, "
+            f"got {sorted(str(path) for path in actual)}."
+        )
+
+    for relative in SKILL_RELATIVE_PATHS:
+        portable = PORTABLE_ROOT / relative
+        mirror = CLAUDE_ROOT / relative
+
+        if portable.read_bytes() != mirror.read_bytes():
+            fail(f"Claude project Skill drift detected: {mirror}")
+
+
 def validate_problem_map() -> tuple[set[str], dict[str, int]]:
-    """Validate the bundled problem map and return its command/status sets."""
+    """Validate the bundled problem map and return command/status sets."""
     mapping = load_json_object(
         REFERENCE_ROOT / "problem-command-map.json"
     )
@@ -291,8 +340,85 @@ def validate_skill_text(allowed: set[str]) -> dict[str, str]:
     return metadata
 
 
+def validate_repository_instructions() -> None:
+    """Validate repository-wide and platform-specific adapters."""
+    for name, path in ADAPTER_PATHS.items():
+        if not path.is_file():
+            fail(f"Repository adapter is missing: {path}")
+
+        text = path.read_text(encoding="utf-8")
+        normalized = normalize_text(text)
+
+        if not text.endswith("\n"):
+            fail(f"Repository adapter lacks final newline: {path}")
+
+        if len(text) > 8000:
+            fail(f"Repository adapter is unexpectedly large: {path}")
+
+        for required in COMMON_ADAPTER_TEXT:
+            if normalize_text(required) not in normalized:
+                fail(f"{name} adapter omits safety text: {required}")
+
+    agents = ADAPTER_PATHS["agents"].read_text(encoding="utf-8")
+    agents_normalized = normalize_text(agents)
+
+    for required in (
+        "docs/problems/problem-command-map.json",
+        "agent-skills/red-govern/SKILL.md",
+        ".claude/skills/red-govern/",
+        ".github/workflows/docs.yml",
+        "create a fresh public-safe commit",
+        "python scripts/validate_agent_assets.py",
+        "mkdocs build --strict",
+    ):
+        if normalize_text(required) not in agents_normalized:
+            fail(f"AGENTS.md omits repository rule: {required}")
+
+    thin_requirements = {
+        "claude": [
+            "Follow `AGENTS.md`",
+            ".claude/skills/red-govern/SKILL.md",
+        ],
+        "gemini": [
+            "Follow `AGENTS.md`",
+            "agent-skills/red-govern/SKILL.md",
+        ],
+        "copilot": [
+            "Follow `AGENTS.md`",
+            "agent-skills/red-govern/SKILL.md",
+        ],
+    }
+
+    for name, required_items in thin_requirements.items():
+        text = ADAPTER_PATHS[name].read_text(encoding="utf-8")
+        normalized = normalize_text(text)
+
+        if len(text) > 2000:
+            fail(f"{name} adapter is not thin.")
+
+        if "```" in text:
+            fail(f"{name} adapter must not duplicate command blocks.")
+
+        commands = set(
+            re.findall(
+                r"`(red-govern(?: [a-z0-9-]+))`",
+                text,
+            )
+        )
+
+        if commands:
+            fail(
+                f"{name} adapter duplicates Red-Govern commands: "
+                f"{sorted(commands)}"
+            )
+
+        for required in required_items:
+            if normalize_text(required) not in normalized:
+                fail(f"{name} adapter omits: {required}")
+
+
 def main() -> int:
-    """Validate the portable Red-Govern Skill bundle."""
+    """Validate portable Skills and repository agent adapters."""
     if not SKILL_PATH.is_file():
         fail(f"SKILL.md is missing: {SKILL_PATH}")
 
@@ -300,10 +426,12 @@ def main() -> int:
         fail(f"Skill reference directory is missing: {REFERENCE_ROOT}")
 
     validate_reference_equality()
+    validate_claude_mirror()
     allowed, status_counts = validate_problem_map()
     metadata = validate_skill_text(allowed)
+    validate_repository_instructions()
 
-    print("Validated Skill:", SKILL_PATH)
+    print("Validated portable Skill:", SKILL_PATH)
     print("Skill name:", metadata["name"])
     print("Skill description length:", len(metadata["description"]))
     print("Package version:", EXPECTED_VERSION)
@@ -312,8 +440,10 @@ def main() -> int:
     print("Conditional:", status_counts["conditional"])
     print("Unsupported:", status_counts["unsupported"])
     print("Allowed commands:", len(allowed))
-    print("Reference files: 4")
-    print("Reference drift: none")
+    print("Portable reference files: 4")
+    print("Claude project Skill files: 5")
+    print("Repository instruction files: 4")
+    print("Cross-agent drift: none")
     print("Portable agent-asset validation passed.")
     return 0
 
