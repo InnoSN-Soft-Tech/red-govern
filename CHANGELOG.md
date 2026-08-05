@@ -20,6 +20,9 @@ alpha, functionality and interfaces may change between releases.
   schema, recommendation-boundary, and agent-contract references.
 - Added repository instructions for `AGENTS.md`, Claude Code, Gemini CLI, and
   GitHub Copilot, plus an exact project-local Claude Skill mirror.
+- Added agent installation, evaluation, deterministic distribution, licence,
+  notice, commercial-licensing, and trademark documentation.
+- Added a downloadable versioned Skill archive with checksum and manifests.
 
 ### Validation
 
@@ -29,6 +32,9 @@ alpha, functionality and interfaces may change between releases.
   drift validation across the quality job and Python 3.10–3.13 matrix.
 - Extended agent-asset validation to enforce the Claude Skill mirror, thin
   non-conflicting platform adapters, and repository-instruction safety rules.
+- Added 28 deterministic contract fixtures and cross-version evaluation.
+- Added byte-for-byte deterministic Skill archive validation on Python
+  3.10–3.13.
 
 ## 0.1.0a3 - 2026-08-05
 

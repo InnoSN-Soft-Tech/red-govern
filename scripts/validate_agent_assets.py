@@ -1,7 +1,8 @@
-"""Validate Red-Govern portable Skills and repository agent adapters."""
+"""Validate Red-Govern Skills, adapters, evaluations, and distribution."""
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -12,6 +13,17 @@ PORTABLE_ROOT = ROOT / "agent-skills" / "red-govern"
 SKILL_PATH = PORTABLE_ROOT / "SKILL.md"
 REFERENCE_ROOT = PORTABLE_ROOT / "references"
 CLAUDE_ROOT = ROOT / ".claude" / "skills" / "red-govern"
+
+EVALUATION_PATH = (
+    ROOT / "agent-skills" / "evals" / "red-govern-cases.json"
+)
+DISTRIBUTION_README = (
+    ROOT / "agent-skills" / "distribution" / "README.md"
+)
+DIST_ROOT = ROOT / "agent-skills" / "dist"
+ARCHIVE_PATH = DIST_ROOT / "red-govern-0.1.0a3.zip"
+SHA_PATH = DIST_ROOT / "red-govern-0.1.0a3.sha256"
+MANIFEST_PATH = DIST_ROOT / "manifest.json"
 
 EXPECTED_NAME = "red-govern"
 EXPECTED_VERSION = "0.1.0a3"
@@ -54,6 +66,12 @@ ADAPTER_PATHS = {
     "gemini": ROOT / "GEMINI.md",
     "copilot": ROOT / ".github" / "copilot-instructions.md",
 }
+
+AGENT_DOC_PATHS = [
+    ROOT / "docs" / "agents" / "index.md",
+    ROOT / "docs" / "agents" / "installation.md",
+    ROOT / "docs" / "agents" / "evaluations.md",
+]
 
 REQUIRED_SECTIONS = [
     "Purpose and activation",
@@ -98,6 +116,11 @@ def fail(message: str) -> NoReturn:
 def normalize_text(value: str) -> str:
     """Collapse formatting whitespace for semantic checks."""
     return " ".join(value.split())
+
+
+def digest_bytes(data: bytes) -> str:
+    """Return a SHA-256 digest."""
+    return hashlib.sha256(data).hexdigest()
 
 
 def load_json_object(path: Path) -> dict[str, Any]:
@@ -417,8 +440,93 @@ def validate_repository_instructions() -> None:
                 fail(f"{name} adapter omits: {required}")
 
 
+def validate_evaluation_and_docs() -> None:
+    """Validate evaluation metadata, installation docs, and legal text."""
+    suite = load_json_object(EVALUATION_PATH)
+
+    if suite.get("package_version") != EXPECTED_VERSION:
+        fail("Evaluation suite version is unexpected.")
+
+    if suite.get("suite_type") != "deterministic-contract-fixtures":
+        fail("Evaluation suite type is unexpected.")
+
+    if suite.get("model_execution") is not False:
+        fail("Evaluation suite must not claim live model execution.")
+
+    cases = suite.get("cases")
+
+    if not isinstance(cases, list) or len(cases) != 28:
+        fail("Evaluation suite must contain 28 cases.")
+
+    for path in AGENT_DOC_PATHS:
+        if not path.is_file():
+            fail(f"Agent documentation is missing: {path}")
+
+        text = path.read_text(encoding="utf-8")
+
+        if not text.endswith("\n"):
+            fail(f"Agent documentation lacks final newline: {path}")
+
+    if not DISTRIBUTION_README.is_file():
+        fail("Distribution README is missing.")
+
+    distribution_text = normalize_text(
+        DISTRIBUTION_README.read_text(encoding="utf-8")
+    )
+
+    for required in (
+        "PolyForm Perimeter License 1.0.1",
+        "COMMERCIAL_LICENSE.md",
+        "NOTICE",
+        "TRADEMARKS.md",
+        "does not automatically install, activate, or index Red-Govern",
+        "does not execute or score a live language model",
+    ):
+        if normalize_text(required) not in distribution_text:
+            fail(f"Distribution README omits: {required}")
+
+
+def validate_distribution_metadata() -> None:
+    """Validate tracked distribution metadata and archive digest."""
+    for path in (ARCHIVE_PATH, SHA_PATH, MANIFEST_PATH):
+        if not path.is_file():
+            fail(f"Skill distribution output is missing: {path}")
+
+    manifest = load_json_object(MANIFEST_PATH)
+
+    if manifest.get("package_version") != EXPECTED_VERSION:
+        fail("Distribution manifest version is unexpected.")
+
+    if manifest.get("artifact") != ARCHIVE_PATH.name:
+        fail("Distribution artifact name is unexpected.")
+
+    if manifest.get("deterministic") is not True:
+        fail("Distribution manifest is not deterministic.")
+
+    legal_files = manifest.get("legal_files")
+
+    if legal_files != [
+        "red-govern/LICENSE.md",
+        "red-govern/COMMERCIAL_LICENSE.md",
+        "red-govern/NOTICE",
+        "red-govern/TRADEMARKS.md",
+    ]:
+        fail("Distribution legal-file list is unexpected.")
+
+    archive_bytes = ARCHIVE_PATH.read_bytes()
+    archive_sha = digest_bytes(archive_bytes)
+
+    if manifest.get("sha256") != archive_sha:
+        fail("Distribution manifest digest differs from archive.")
+
+    expected_checksum = f"{archive_sha}  {ARCHIVE_PATH.name}\n"
+
+    if SHA_PATH.read_text(encoding="utf-8") != expected_checksum:
+        fail("Distribution checksum file differs.")
+
+
 def main() -> int:
-    """Validate portable Skills and repository agent adapters."""
+    """Validate every tracked AI-agent asset."""
     if not SKILL_PATH.is_file():
         fail(f"SKILL.md is missing: {SKILL_PATH}")
 
@@ -430,6 +538,8 @@ def main() -> int:
     allowed, status_counts = validate_problem_map()
     metadata = validate_skill_text(allowed)
     validate_repository_instructions()
+    validate_evaluation_and_docs()
+    validate_distribution_metadata()
 
     print("Validated portable Skill:", SKILL_PATH)
     print("Skill name:", metadata["name"])
@@ -443,6 +553,9 @@ def main() -> int:
     print("Portable reference files: 4")
     print("Claude project Skill files: 5")
     print("Repository instruction files: 4")
+    print("Evaluation cases: 28")
+    print("Agent documentation files: 3")
+    print("Distribution legal files: 4")
     print("Cross-agent drift: none")
     print("Portable agent-asset validation passed.")
     return 0

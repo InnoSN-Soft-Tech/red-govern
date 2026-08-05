@@ -41,6 +41,10 @@ nav:
       - Problem taxonomy: problems/index.md
       - Recommendation boundaries: problems/recommendation-boundaries.md
       - Agent integration contract: problems/agent-integration-contract.md
+  - AI agents:
+      - Overview: agents/index.md
+      - Installation: agents/installation.md
+      - Evaluations and distribution: agents/evaluations.md
   - Redshift:
       - Compatibility: compatibility.md
       - Permissions: permissions.md

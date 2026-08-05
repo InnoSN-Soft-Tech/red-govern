@@ -1,0 +1,76 @@
+{
+  "artifact": "red-govern-0.1.0a3.zip",
+  "compression": "stored",
+  "contents": [
+    {
+      "path": "red-govern/COMMERCIAL_LICENSE.md",
+      "sha256": "e0f78dd2810591dfb94ffe6bd670ee1ec37331b1558fa699c546ab2e9937bc8b",
+      "size": 1434
+    },
+    {
+      "path": "red-govern/LICENSE.md",
+      "sha256": "5c7a5ccd847fcc285dda039e511ba013693fe979dfc5faee47f6fb59c7add337",
+      "size": 4529
+    },
+    {
+      "path": "red-govern/MANIFEST.json",
+      "sha256": "21d918ab598a064c4b3d40edd864b7994c641cb62eb78ac44e5f6ed233d7511d",
+      "size": 1984
+    },
+    {
+      "path": "red-govern/NOTICE",
+      "sha256": "180ad22858143a26bbb4189281c35fa3ac6cc73a440931c5d2a7be1b4057a937",
+      "size": 1012
+    },
+    {
+      "path": "red-govern/README.md",
+      "sha256": "3c202cc12a9cadeb3ecb350eef4fe62d93fcdbf2cdf855ff338c1a41d0d6f469",
+      "size": 2202
+    },
+    {
+      "path": "red-govern/SKILL.md",
+      "sha256": "60109fa4b3c395527e1cd46b4d94f6511d2f8d240ed49c97a17b0bfbbff861f5",
+      "size": 8854
+    },
+    {
+      "path": "red-govern/TRADEMARKS.md",
+      "sha256": "6df11b208aebff16e2b0c959a020030be02e7c2bc0cd71d90d21a1dacdb4716f",
+      "size": 925
+    },
+    {
+      "path": "red-govern/references/agent-integration-contract.md",
+      "sha256": "8177596a031150a8ef4ba4986baa1f76adda1cf621234d450926be4993545d69",
+      "size": 2824
+    },
+    {
+      "path": "red-govern/references/problem-command-map.json",
+      "sha256": "00f0a27c8a242b87c7afeb1f6147efe2c37267a1cfca1deb97473b0f8e1438fe",
+      "size": 31578
+    },
+    {
+      "path": "red-govern/references/problem-command-map.schema.json",
+      "sha256": "8692eba1c1d547cd784a45f81c5a8e092880b986676f94b62e38ba6026850507",
+      "size": 3576
+    },
+    {
+      "path": "red-govern/references/recommendation-boundaries.md",
+      "sha256": "96f41c364af4dcebf297910039a8c330c123adbab4d20f436d8da6b40bc3c5b7",
+      "size": 3165
+    }
+  ],
+  "deterministic": true,
+  "entry_mode": "0644",
+  "entry_timestamp": "1980-01-01T00:00:00Z",
+  "format": "zip",
+  "legal_files": [
+    "red-govern/LICENSE.md",
+    "red-govern/COMMERCIAL_LICENSE.md",
+    "red-govern/NOTICE",
+    "red-govern/TRADEMARKS.md"
+  ],
+  "package_version": "0.1.0a3",
+  "schema_version": "1.0",
+  "sha256": "ad1a024a535035b898e79383e03bdfba807e81ed3098396170fbf00254b77fb7",
+  "size": 63655,
+  "validation": "python scripts/build_agent_skill_distribution.py --check"
+}

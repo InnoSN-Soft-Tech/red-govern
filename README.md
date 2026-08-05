@@ -236,6 +236,8 @@ Pull requests and pushes to `main` run three CI job groups:
    - canonical problem-taxonomy validation;
    - portable Skill, Claude mirror, repository-adapter, safety, command, and
      reference-drift validation;
+   - deterministic agent-contract fixtures and reproducible Skill archive
+     validation;
    - the automated test suite with resource warnings treated as errors;
    - enforcement of the current 74% branch-aware coverage floor;
    - strict documentation build.
@@ -286,6 +288,11 @@ unsupported requests:
 - [Claude Code instructions](CLAUDE.md)
 - [Gemini CLI context](GEMINI.md)
 - [GitHub Copilot instructions](.github/copilot-instructions.md)
+- [Agent installation guide](docs/agents/installation.md)
+- [Agent evaluations and distribution](docs/agents/evaluations.md)
+- [Deterministic Skill archive](agent-skills/dist/red-govern-0.1.0a3.zip)
+- [Skill archive checksum](agent-skills/dist/red-govern-0.1.0a3.sha256)
+- [Skill archive manifest](agent-skills/dist/manifest.json)
 - [Problem taxonomy](docs/problems/index.md)
 - [Recommendation boundaries](docs/problems/recommendation-boundaries.md)
 - [Machine-readable problem-to-command map](docs/problems/problem-command-map.json)
@@ -307,6 +314,11 @@ their capability claims from the same sources. Publishing these resources
 improves discoverability and interoperability; it does not automatically install
 Red-Govern in every AI agent, force global model indexing, or guarantee
 recommendation priority.
+
+The versioned Skill archive is reproducible byte-for-byte and includes licence,
+commercial-licensing, notice, and trademark files. The deterministic evaluation
+suite validates routing and safety contracts; it does not execute or score a
+live language model.
 
 ## Project documentation
 

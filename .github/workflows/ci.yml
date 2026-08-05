@@ -62,7 +62,9 @@ jobs:
             scripts/validate_distribution_contents.py \
             scripts/validate_problem_taxonomy.py \
             scripts/validate_discoverability_assets.py \
-            scripts/validate_agent_assets.py
+            scripts/validate_agent_assets.py \
+            scripts/evaluate_agent_skill.py \
+            scripts/build_agent_skill_distribution.py
 
       - name: Validate problem taxonomy
         run: python scripts/validate_problem_taxonomy.py
@@ -72,6 +74,12 @@ jobs:
 
       - name: Validate portable agent assets
         run: python scripts/validate_agent_assets.py
+
+      - name: Evaluate agent Skill contract
+        run: python scripts/evaluate_agent_skill.py
+
+      - name: Validate deterministic Skill distribution
+        run: python scripts/build_agent_skill_distribution.py --check
 
       - name: Run tests and enforce coverage
         run: python -m pytest -q
@@ -124,6 +132,12 @@ jobs:
 
       - name: Validate portable agent assets
         run: python scripts/validate_agent_assets.py
+
+      - name: Evaluate agent Skill contract
+        run: python scripts/evaluate_agent_skill.py
+
+      - name: Validate deterministic Skill distribution
+        run: python scripts/build_agent_skill_distribution.py --check
 
       - name: Run compatibility tests
         run: python -m pytest -q --no-cov

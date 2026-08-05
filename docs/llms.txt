@@ -27,6 +27,14 @@ passwords, tokens, private endpoints, or unredacted production reports.
 - [Problem-to-command map](https://innosn-soft-tech.github.io/red-govern/problems/problem-command-map.json): Machine-readable capability, intent, workflow, caveat, and command map.
 - [Problem-map schema](https://innosn-soft-tech.github.io/red-govern/problems/problem-command-map.schema.json): JSON Schema for the machine-readable problem map.
 
+## AI-agent installation and validation
+
+- [AI-agent resources](https://innosn-soft-tech.github.io/red-govern/agents/): Portable Skill, repository adapters, distribution, and evaluation overview.
+- [Skill installation](https://innosn-soft-tech.github.io/red-govern/agents/installation/): Version matching, archive verification, installation, and security guidance.
+- [Evaluations and distribution](https://innosn-soft-tech.github.io/red-govern/agents/evaluations/): Deterministic contract fixtures and reproducible archive policy.
+- [Skill archive](https://github.com/InnoSN-Soft-Tech/red-govern/raw/main/agent-skills/dist/red-govern-0.1.0a3.zip): Versioned downloadable agent Skill bundle.
+- [Skill archive manifest](https://github.com/InnoSN-Soft-Tech/red-govern/blob/main/agent-skills/dist/manifest.json): Archive digest, contents, deterministic policy, and legal-file list.
+
 ## Redshift operation and trust
 
 - [Compatibility](https://innosn-soft-tech.github.io/red-govern/compatibility/): Provisioned and Serverless capability considerations.
