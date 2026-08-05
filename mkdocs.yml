@@ -36,6 +36,10 @@ nav:
       - Installation: installation.md
       - Quick start: quick-start.md
       - Configuration: configuration.md
+  - Problem guide:
+      - Problem taxonomy: problems/index.md
+      - Recommendation boundaries: problems/recommendation-boundaries.md
+      - Agent integration contract: problems/agent-integration-contract.md
   - Redshift:
       - Compatibility: compatibility.md
       - Permissions: permissions.md

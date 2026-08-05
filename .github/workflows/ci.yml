@@ -53,10 +53,17 @@ jobs:
         run: python -m compileall -q src/red_govern
 
       - name: Run Ruff
-        run: python -m ruff check src tests
+        run: python -m ruff check src tests scripts
 
       - name: Run MyPy
-        run: python -m mypy src
+        run: |
+          python -m mypy src
+          python -m mypy \
+            scripts/validate_distribution_contents.py \
+            scripts/validate_problem_taxonomy.py
+
+      - name: Validate problem taxonomy
+        run: python scripts/validate_problem_taxonomy.py
 
       - name: Run tests and enforce coverage
         run: python -m pytest -q
@@ -100,6 +107,9 @@ jobs:
 
       - name: Compile Python package
         run: python -m compileall -q src/red_govern
+
+      - name: Validate problem taxonomy
+        run: python scripts/validate_problem_taxonomy.py
 
       - name: Run compatibility tests
         run: python -m pytest -q --no-cov

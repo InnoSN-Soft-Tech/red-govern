@@ -25,6 +25,15 @@ alpha, functionality and interfaces may change between releases.
 - Enforced a 74% branch-aware coverage baseline and made resource warnings
   fail the test suite.
 
+### Documentation
+
+- Added a canonical Amazon Redshift problem-to-command taxonomy with
+  `supported`, `conditional`, and `unsupported` recommendation boundaries.
+- Added a machine-readable capability map and schema for future `SKILL.md`,
+  custom GPT, OpenAPI, MCP, Claude, Gemini, GitHub Copilot, and generic agent
+  adapters.
+- Added automated taxonomy validation to CI across Python 3.10–3.13.
+
 ### Fixed
 
 - Closed temporary SQLite initialisation connections explicitly to prevent
