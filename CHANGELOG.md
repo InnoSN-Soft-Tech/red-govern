@@ -8,6 +8,12 @@ alpha, functionality and interfaces may change between releases.
 
 ## Unreleased
 
+No unreleased changes.
+
+## 0.1.0a3 - 2026-08-05
+
+Alpha discoverability and governance-contract release focused on current package messaging, Python compatibility policy, distribution validation, and an AI-agent-safe problem taxonomy.
+
 ### Packaging
 
 - Corrected the explicit Hatch source-distribution license paths to reference

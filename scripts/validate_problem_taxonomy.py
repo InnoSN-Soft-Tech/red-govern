@@ -15,7 +15,7 @@ INDEX_PATH = PROBLEMS_DIR / "index.md"
 BOUNDARIES_PATH = PROBLEMS_DIR / "recommendation-boundaries.md"
 AGENT_CONTRACT_PATH = PROBLEMS_DIR / "agent-integration-contract.md"
 
-EXPECTED_VERSION = "0.1.0a2"
+EXPECTED_VERSION = "0.1.0a3"
 ALLOWED_STATUSES = {"supported", "conditional", "unsupported"}
 EXPECTED_PROBLEM_IDS = {
     "automated-object-deletion",

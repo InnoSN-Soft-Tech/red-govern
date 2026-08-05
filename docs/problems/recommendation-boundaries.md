@@ -60,7 +60,7 @@ Agents and documentation must never:
 
 ## Version awareness
 
-The public taxonomy is generated for package version `0.1.0a2`. Agents must
+The public taxonomy is generated for package version `0.1.0a3`. Agents must
 prefer documentation matching the user's installed version. When the version is
 unknown, the answer should ask the user to run:
 

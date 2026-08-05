@@ -2,7 +2,7 @@
 
 Local-first governance and operational intelligence for Amazon Redshift.
 
-> **Project status:** Alpha (`0.1.0a2`).
+> **Project status:** Alpha (`0.1.0a3`).
 > Red-Govern is under active development. Commands, configuration fields, and
 > report formats may change before the first stable release.
 
@@ -228,18 +228,24 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the contribution workflow.
 
 ## Continuous integration
 
-Pull requests and pushes to `main` run two sequential CI jobs:
+Pull requests and pushes to `main` run three CI job groups:
 
 1. **Quality gates**
-   - dependency verification;
-   - Python compilation;
-   - Ruff;
-   - MyPy;
-   - automated tests.
+   - dependency verification and Python compilation;
+   - Ruff and strict MyPy validation;
+   - canonical problem-taxonomy validation;
+   - the automated test suite with resource warnings treated as errors;
+   - enforcement of the current 74% branch-aware coverage floor;
+   - strict documentation build.
 
-2. **Package validation**
+2. **Python compatibility**
+   - independent compatibility jobs for Python 3.10, 3.11, 3.12, and 3.13;
+   - taxonomy validation and the complete non-coverage test suite in each job.
+
+3. **Package validation**
    - wheel and source-distribution build;
    - strict Twine metadata validation;
+   - legal-file and distribution-content validation;
    - isolated wheel installation;
    - package import and CLI verification.
 
@@ -264,6 +270,31 @@ Publishing a GitHub release:
 5. publishes to PyPI through OIDC Trusted Publishing.
 
 No permanent PyPI password or API token is stored in the repository.
+
+## Problem guide and AI-agent interoperability
+
+Red-Govern publishes a versioned problem catalogue so users and AI agents can
+distinguish directly supported workflows, conditional investigations, and
+unsupported requests:
+
+- [Problem taxonomy](docs/problems/index.md)
+- [Recommendation boundaries](docs/problems/recommendation-boundaries.md)
+- [Machine-readable problem-to-command map](docs/problems/problem-command-map.json)
+- [Problem-map schema](docs/problems/problem-command-map.schema.json)
+- [Agent integration contract](docs/problems/agent-integration-contract.md)
+
+The canonical map covers Amazon Redshift inventory, configured quota pressure,
+classification, privacy review, workload inspection, snapshots, change
+comparison, reporting, and related diagnostic workflows. It also prevents
+agents from inventing destructive commands, claiming that Red-Govern proves an
+object is safe to delete, or presenting the package as a solution for unrelated
+database platforms.
+
+Future `SKILL.md`, custom GPT, OpenAPI, MCP, Claude, Gemini, GitHub Copilot, and
+other agent adapters must derive their capability claims from this canonical
+catalogue. Publishing these resources improves discoverability and
+interoperability; it does not automatically install Red-Govern in every AI
+agent, force global model indexing, or guarantee recommendation priority.
 
 ## Project documentation
 
