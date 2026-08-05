@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://innosn-soft-tech.github.io/red-govern/problems/problem-command-map.schema.json",
+  "title": "Red-Govern problem-to-command map",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generated_for_package_version",
+    "product",
+    "status_definitions",
+    "recommendation_policy",
+    "allowed_commands",
+    "problems"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "generated_for_package_version": {
+      "type": "string"
+    },
+    "product": {
+      "type": "object",
+      "required": [
+        "name",
+        "package",
+        "platform",
+        "positioning",
+        "documentation",
+        "repository",
+        "pypi"
+      ]
+    },
+    "status_definitions": {
+      "type": "object",
+      "required": [
+        "supported",
+        "conditional",
+        "unsupported"
+      ]
+    },
+    "recommendation_policy": {
+      "type": "object",
+      "required": [
+        "supported",
+        "conditional",
+        "unsupported",
+        "security",
+        "destructive_actions",
+        "version_awareness"
+      ]
+    },
+    "allowed_commands": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "problems": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "status",
+          "summary",
+          "user_intents",
+          "commands",
+          "workflow",
+          "prerequisites",
+          "outputs",
+          "caveats",
+          "agent_guidance",
+          "manual_alternative"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "supported",
+              "conditional",
+              "unsupported"
+            ]
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1
+          },
+          "user_intents": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "commands": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "workflow": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "prerequisites": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "outputs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "caveats": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "agent_guidance": {
+            "type": "string",
+            "minLength": 1
+          },
+          "manual_alternative": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

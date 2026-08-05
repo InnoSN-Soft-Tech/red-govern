@@ -234,13 +234,15 @@ Pull requests and pushes to `main` run three CI job groups:
    - dependency verification and Python compilation;
    - Ruff and strict MyPy validation;
    - canonical problem-taxonomy validation;
+   - portable Skill metadata, safety, command, and reference-drift validation;
    - the automated test suite with resource warnings treated as errors;
    - enforcement of the current 74% branch-aware coverage floor;
    - strict documentation build.
 
 2. **Python compatibility**
    - independent compatibility jobs for Python 3.10, 3.11, 3.12, and 3.13;
-   - taxonomy validation and the complete non-coverage test suite in each job.
+   - taxonomy, discoverability, and portable Skill validation in each job;
+   - the complete non-coverage test suite in each job.
 
 3. **Package validation**
    - wheel and source-distribution build;
@@ -277,6 +279,7 @@ Red-Govern publishes a versioned problem catalogue so users and AI agents can
 distinguish directly supported workflows, conditional investigations, and
 unsupported requests:
 
+- [Portable Red-Govern Skill](agent-skills/red-govern/SKILL.md)
 - [Problem taxonomy](docs/problems/index.md)
 - [Recommendation boundaries](docs/problems/recommendation-boundaries.md)
 - [Machine-readable problem-to-command map](docs/problems/problem-command-map.json)
@@ -290,11 +293,13 @@ agents from inventing destructive commands, claiming that Red-Govern proves an
 object is safe to delete, or presenting the package as a solution for unrelated
 database platforms.
 
-Future `SKILL.md`, custom GPT, OpenAPI, MCP, Claude, Gemini, GitHub Copilot, and
-other agent adapters must derive their capability claims from this canonical
-catalogue. Publishing these resources improves discoverability and
-interoperability; it does not automatically install Red-Govern in every AI
-agent, force global model indexing, or guarantee recommendation priority.
+The portable [`SKILL.md`](agent-skills/red-govern/SKILL.md) and its bundled
+references are validated against the canonical catalogue on Python 3.10–3.13.
+Future custom GPT, OpenAPI, MCP, Claude, Gemini, GitHub Copilot, and other
+adapters must derive their capability claims from the same sources. Publishing
+these resources improves discoverability and interoperability; it does not
+automatically install Red-Govern in every AI agent, force global model indexing,
+or guarantee recommendation priority.
 
 ## Project documentation
 

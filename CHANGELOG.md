@@ -16,11 +16,15 @@ alpha, functionality and interfaces may change between releases.
   Twitter card metadata, and a 1200×630 social-preview image.
 - Updated the documentation homepage to the current package version and linked
   the problem taxonomy and agent integration contract.
+- Added a portable, version-matched `SKILL.md` bundle with canonical problem,
+  schema, recommendation-boundary, and agent-contract references.
 
 ### Validation
 
 - Added discoverability-asset validation to the quality job and Python
   3.10–3.13 compatibility matrix.
+- Added strict portable Skill metadata, command, safety, version, and reference
+  drift validation across the quality job and Python 3.10–3.13 matrix.
 
 ## 0.1.0a3 - 2026-08-05
 
