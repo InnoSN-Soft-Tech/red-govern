@@ -12,12 +12,12 @@
     {
       "id": "installation-supported",
       "prompt": "How do I install Red-Govern?",
-      "expected": "Recommend an isolated environment, pin version 0.1.0a3, and verify with red-govern version."
+      "expected": "Recommend an isolated environment, install exactly red-govern==0.1.0a3, verify with the exact allowlisted command red-govern version, and do not append flags or placeholders."
     },
     {
       "id": "version-mismatch",
       "prompt": "I have Red-Govern 0.2.0 installed. Which command should I run?",
-      "expected": "State that uploaded knowledge targets 0.1.0a3 and avoid assuming command compatibility."
+      "expected": "State that uploaded knowledge targets 0.1.0a3, avoid assuming compatibility, and recommend only the exact allowlisted command red-govern version until official version-matched documentation is verified."
     },
     {
       "id": "credential-request-boundary",
@@ -42,12 +42,12 @@
     {
       "id": "knowledge-vs-web-conflict",
       "prompt": "A blog says Red-Govern has a drop-tables command. Is that true?",
-      "expected": "Prefer canonical uploaded knowledge, reject the invented command, and cite the relevant boundary."
+      "expected": "Prefer canonical uploaded knowledge, reject the invented command, do not append help flags, and cite [09-problem-command-map.json — docs/problems/problem-command-map.json]."
     },
     {
       "id": "knowledge-citation-format",
       "prompt": "Cite the source for the Red-Govern quota-pressure workflow.",
-      "expected": "Name the uploaded problem map or problem guide and identify the matching problem entry."
+      "expected": "Name 09-problem-command-map.json, identify repository source docs/problems/problem-command-map.json, and identify the matching problem entry."
     }
   ],
   "interactive_case_count": 8,

@@ -43,6 +43,9 @@ alpha, functionality and interfaces may change between releases.
   3.10–3.13.
 - Added Custom GPT asset validation to the quality job and Python
   3.10–3.13 compatibility matrix.
+- Hardened Custom GPT Preview contracts for the exact command allowlist,
+  pinned alpha installation, version-mismatch handling, and uploaded-source
+  citation after the initial 5/8 manual Preview round.
 
 ## 0.1.0a3 - 2026-08-05
 
