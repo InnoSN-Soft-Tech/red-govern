@@ -21,6 +21,11 @@ CHECKLIST_PATH = GPT_ROOT / "publishing-checklist.md"
 
 EXPECTED_VERSION = "0.1.0a3"
 EXPECTED_NAME = "Red-Govern — Redshift Governance Advisor"
+EXPECTED_KNOWLEDGE_LIMIT = 10
+EXPECTED_KNOWLEDGE_LIMIT_CHECKED_AT = "2026-08-06"
+EXPECTED_KNOWLEDGE_LIMIT_SOURCE = (
+    "https://help.openai.com/en/articles/8555545"
+)
 
 EXPECTED_GPT_FILES = {
     CONFIG_PATH,
@@ -42,7 +47,6 @@ EXPECTED_STARTERS = [
 
 EXPECTED_KNOWLEDGE_SOURCES = [
     ("01-product-readme.md", "README.md"),
-    ("02-product-overview.md", "docs/index.md"),
     ("03-installation.md", "docs/installation.md"),
     ("04-configuration.md", "docs/configuration.md"),
     ("05-compatibility.md", "docs/compatibility.md"),
@@ -58,8 +62,12 @@ EXPECTED_KNOWLEDGE_SOURCES = [
         "11-agent-integration-contract.md",
         "docs/problems/agent-integration-contract.md",
     ),
-    ("12-agent-resources.md", "docs/agents/index.md"),
-    ("13-agent-evaluations.md", "docs/agents/evaluations.md"),
+]
+
+EXPECTED_OMITTED_KNOWLEDGE_SOURCES = [
+    "docs/index.md",
+    "docs/agents/index.md",
+    "docs/agents/evaluations.md",
 ]
 
 EXPECTED_INTERACTIVE_IDS = [
@@ -231,6 +239,29 @@ def validate_config() -> dict[str, Any]:
     if any(value is not False for value in boundaries.values()):
         fail("Custom GPT boundary booleans must all be false.")
 
+    knowledge = config.get("knowledge")
+
+    if not isinstance(knowledge, dict):
+        fail("Custom GPT knowledge configuration is invalid.")
+
+    if knowledge.get("file_count") != EXPECTED_KNOWLEDGE_LIMIT:
+        fail("Custom GPT knowledge file count differs.")
+
+    if knowledge.get("file_limit") != EXPECTED_KNOWLEDGE_LIMIT:
+        fail("Custom GPT knowledge file limit differs.")
+
+    if (
+        knowledge.get("platform_limit_checked_at")
+        != EXPECTED_KNOWLEDGE_LIMIT_CHECKED_AT
+    ):
+        fail("Custom GPT knowledge-limit check date differs.")
+
+    if (
+        knowledge.get("platform_limit_source")
+        != EXPECTED_KNOWLEDGE_LIMIT_SOURCE
+    ):
+        fail("Custom GPT knowledge-limit source differs.")
+
     return config
 
 
@@ -300,11 +331,26 @@ def validate_knowledge() -> None:
     if data.get("gpt_name") != EXPECTED_NAME:
         fail("Knowledge-manifest GPT name differs.")
 
-    if data.get("file_limit") != 20:
+    if data.get("file_limit") != EXPECTED_KNOWLEDGE_LIMIT:
         fail("Knowledge-manifest file limit differs.")
 
-    if data.get("file_count") != 13:
+    if data.get("file_count") != EXPECTED_KNOWLEDGE_LIMIT:
         fail("Knowledge-manifest file count differs.")
+
+    if (
+        data.get("platform_limit_checked_at")
+        != EXPECTED_KNOWLEDGE_LIMIT_CHECKED_AT
+    ):
+        fail("Knowledge-manifest limit-check date differs.")
+
+    if data.get("platform_limit_source") != EXPECTED_KNOWLEDGE_LIMIT_SOURCE:
+        fail("Knowledge-manifest limit source differs.")
+
+    if (
+        data.get("omitted_redundant_sources")
+        != EXPECTED_OMITTED_KNOWLEDGE_SOURCES
+    ):
+        fail("Knowledge-manifest omitted-source set differs.")
 
     if data.get("status_counts") != {
         "supported": 12,
@@ -318,7 +364,7 @@ def validate_knowledge() -> None:
 
     files = data.get("files")
 
-    if not isinstance(files, list) or len(files) != 13:
+    if not isinstance(files, list) or len(files) != EXPECTED_KNOWLEDGE_LIMIT:
         fail("Knowledge-manifest entries differ.")
 
     observed: list[tuple[str, str]] = []
@@ -487,12 +533,13 @@ def validate_checklist() -> None:
 
     required = [
         "initial visibility set to **Private**",
-        "Upload all 13 files",
+        "Upload all 10 files",
         "Require 36/36 planned cases to pass",
         "Disable Actions",
         "Keep API, OpenAPI, authentication, MCP, and runtime work in Step 47.",
         "Google Search Console verification is not a substitute",
         "Publish publicly only after Preview and link-pilot acceptance",
+        "https://help.openai.com/en/articles/8555545",
     ]
 
     for phrase in required:
@@ -524,6 +571,8 @@ def validate_repository_integration() -> None:
         "gpt/red-govern-advisor/evals.json",
         "gpt/red-govern-advisor/publishing-checklist.md",
         "36 planned Custom GPT acceptance cases",
+        "10 versioned knowledge uploads",
+        "OpenAI per-GPT knowledge-file limit checked on 2026-08-06",
     ]
 
     for phrase in required_readme:
@@ -532,6 +581,7 @@ def validate_repository_integration() -> None:
 
     for phrase in (
         "version-controlled Custom GPT asset bundle",
+        "10-file knowledge manifest",
         "Custom GPT asset validation",
     ):
         if phrase not in changelog:
@@ -558,7 +608,7 @@ def main() -> None:
     print(f"Custom GPT name: {config['name']}")
     print(f"Package version: {config['asset_version']}")
     print("Custom GPT files: 6")
-    print("Knowledge files: 13")
+    print("Knowledge files: 10")
     print("Deterministic/interactive/total cases: 28/8/36")
     print("Web search: enabled")
     print("Code Interpreter/Data Analysis: disabled")

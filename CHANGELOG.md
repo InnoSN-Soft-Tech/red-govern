@@ -25,7 +25,8 @@ alpha, functionality and interfaces may change between releases.
 - Added a downloadable versioned Skill archive with checksum and manifests.
 - Added a version-controlled Custom GPT asset bundle with private-first
   configuration, explicit instructions, six conversation starters, and a
-  13-file knowledge manifest.
+  10-file knowledge manifest aligned with the OpenAI limit checked on
+  2026-08-06.
 - Added a 36-case Custom GPT acceptance plan and publishing checklist;
   Actions and runtime integrations remain deferred to Step 47.
 

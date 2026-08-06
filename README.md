@@ -330,9 +330,11 @@ suite validates routing and safety contracts; it does not execute or score a
 live language model.
 
 The knowledge-first Custom GPT bundle defines six conversation starters,
-13 versioned knowledge uploads, and 36 planned Custom GPT acceptance cases.
-It remains private until interactive Preview testing is completed; Actions,
-OpenAPI, MCP, authentication, and runtime execution remain deferred to Step 47.
+10 versioned knowledge uploads, and 36 planned Custom GPT acceptance cases.
+The selection follows the OpenAI per-GPT knowledge-file limit checked on 2026-08-06.
+It remains private until interactive Preview testing is completed;
+Actions, OpenAPI, MCP, authentication, and runtime execution remain deferred
+to Step 47.
 
 ## Project documentation
 

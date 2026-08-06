@@ -3,27 +3,19 @@
   "bundle": "red-govern-custom-gpt-knowledge",
   "package_version": "0.1.0a3",
   "gpt_name": "Red-Govern \u2014 Redshift Governance Advisor",
-  "file_limit": 20,
+  "file_limit": 10,
   "per_file_limit_bytes": 536870912,
   "files": [
     {
       "upload_order": 1,
       "upload_name": "01-product-readme.md",
       "source_path": "README.md",
-      "bytes": 12664,
-      "sha256": "cf5665792830e7e58c458188babfe6f3cf909ccf1b1ae59b3b3bb86ca9b6bf30",
+      "bytes": 12749,
+      "sha256": "6eeff5aeb9d82b7671aec9c9cdd3cb6caa50659bda7a10ba720c21373ecec14f",
       "text_forward": true
     },
     {
       "upload_order": 2,
-      "upload_name": "02-product-overview.md",
-      "source_path": "docs/index.md",
-      "bytes": 2615,
-      "sha256": "bebd6d46d8e2344cdae8c8e05e378b871021e38886b47fb09dff4bc5178b42f1",
-      "text_forward": true
-    },
-    {
-      "upload_order": 3,
       "upload_name": "03-installation.md",
       "source_path": "docs/installation.md",
       "bytes": 1398,
@@ -31,7 +23,7 @@
       "text_forward": true
     },
     {
-      "upload_order": 4,
+      "upload_order": 3,
       "upload_name": "04-configuration.md",
       "source_path": "docs/configuration.md",
       "bytes": 2499,
@@ -39,7 +31,7 @@
       "text_forward": true
     },
     {
-      "upload_order": 5,
+      "upload_order": 4,
       "upload_name": "05-compatibility.md",
       "source_path": "docs/compatibility.md",
       "bytes": 1902,
@@ -47,7 +39,7 @@
       "text_forward": true
     },
     {
-      "upload_order": 6,
+      "upload_order": 5,
       "upload_name": "06-permissions.md",
       "source_path": "docs/permissions.md",
       "bytes": 1952,
@@ -55,7 +47,7 @@
       "text_forward": true
     },
     {
-      "upload_order": 7,
+      "upload_order": 6,
       "upload_name": "07-privacy.md",
       "source_path": "docs/privacy.md",
       "bytes": 1760,
@@ -63,7 +55,7 @@
       "text_forward": true
     },
     {
-      "upload_order": 8,
+      "upload_order": 7,
       "upload_name": "08-limitations.md",
       "source_path": "docs/limitations.md",
       "bytes": 1748,
@@ -71,7 +63,7 @@
       "text_forward": true
     },
     {
-      "upload_order": 9,
+      "upload_order": 8,
       "upload_name": "09-problem-command-map.json",
       "source_path": "docs/problems/problem-command-map.json",
       "bytes": 31578,
@@ -79,7 +71,7 @@
       "text_forward": true
     },
     {
-      "upload_order": 10,
+      "upload_order": 9,
       "upload_name": "10-recommendation-boundaries.md",
       "source_path": "docs/problems/recommendation-boundaries.md",
       "bytes": 3165,
@@ -87,32 +79,16 @@
       "text_forward": true
     },
     {
-      "upload_order": 11,
+      "upload_order": 10,
       "upload_name": "11-agent-integration-contract.md",
       "source_path": "docs/problems/agent-integration-contract.md",
       "bytes": 2824,
       "sha256": "8177596a031150a8ef4ba4986baa1f76adda1cf621234d450926be4993545d69",
       "text_forward": true
-    },
-    {
-      "upload_order": 12,
-      "upload_name": "12-agent-resources.md",
-      "source_path": "docs/agents/index.md",
-      "bytes": 1376,
-      "sha256": "e20c6e3da0abfcbff7a49818f3a5889d2aa4afa5532025910f4d4b200539b1ed",
-      "text_forward": true
-    },
-    {
-      "upload_order": 13,
-      "upload_name": "13-agent-evaluations.md",
-      "source_path": "docs/agents/evaluations.md",
-      "bytes": 1213,
-      "sha256": "32f6351752b3b8e6229cab0e978ba5485e1a0f75dab12c2618fdb55660937f3b",
-      "text_forward": true
     }
   ],
-  "file_count": 13,
-  "total_bytes": 66694,
+  "file_count": 10,
+  "total_bytes": 61575,
   "problem_entries": 21,
   "status_counts": {
     "supported": 12,
@@ -121,5 +97,12 @@
   },
   "allowed_commands": 14,
   "rules_belong_in_instructions": true,
-  "upload_note": "Upload the files using upload_name while preserving the exact source bytes and manifest order."
+  "upload_note": "Upload the 10 files using upload_name while preserving the exact source bytes and manifest order.",
+  "platform_limit_checked_at": "2026-08-06",
+  "platform_limit_source": "https://help.openai.com/en/articles/8555545",
+  "omitted_redundant_sources": [
+    "docs/index.md",
+    "docs/agents/index.md",
+    "docs/agents/evaluations.md"
+  ]
 }

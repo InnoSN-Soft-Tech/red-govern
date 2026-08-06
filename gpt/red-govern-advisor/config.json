@@ -27,10 +27,12 @@
     "publishing_checklist": "publishing-checklist.md"
   },
   "knowledge": {
-    "file_count": 13,
-    "file_limit": 20,
+    "file_count": 10,
+    "file_limit": 10,
     "text_forward": true,
-    "upload_unredacted_production_data": false
+    "upload_unredacted_production_data": false,
+    "platform_limit_checked_at": "2026-08-06",
+    "platform_limit_source": "https://help.openai.com/en/articles/8555545"
   },
   "source_of_truth": {
     "skill": "agent-skills/red-govern/SKILL.md",

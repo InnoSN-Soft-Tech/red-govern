@@ -25,7 +25,7 @@ package version **0.1.0a3**.
 
 ## 3. Knowledge upload
 
-- [ ] Upload all 13 files in `knowledge-manifest.json` order.
+- [ ] Upload all 10 files in `knowledge-manifest.json` order.
 - [ ] Rename each uploaded file to its exact `upload_name`.
 - [ ] Confirm every source digest and byte count before upload.
 - [ ] Do not upload passwords, tokens, endpoints, production reports, query
@@ -34,6 +34,8 @@ package version **0.1.0a3**.
 - [ ] Confirm uploaded file content may be used in GPT responses.
 - [ ] Review current OpenAI file controls and retention information before
       uploading or replacing knowledge.
+- [ ] Confirm the current per-GPT knowledge limit remains 10 files before
+      replacing or expanding the bundle.
 
 ## 4. Preview acceptance
 
@@ -83,6 +85,8 @@ package version **0.1.0a3**.
   https://help.openai.com/en/articles/8554397
 - GPTs in ChatGPT:
   https://help.openai.com/en/articles/8554407
+- File upload limits:
+  https://help.openai.com/en/articles/8555545
 - Sharing and publishing GPTs:
   https://help.openai.com/en/articles/8798878
 - Domain verification:
