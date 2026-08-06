@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "package_version": "0.1.0a3",
+  "conversation_starters": [
+    "Help me assess Amazon Redshift table-limit pressure safely.",
+    "Which Red-Govern command should I use for an object inventory?",
+    "Explain why Red-Govern cannot prove a table is safe to delete.",
+    "Help me validate Red-Govern setup without exposing credentials.",
+    "Compare supported, conditional, and unsupported capabilities.",
+    "How do I install and verify Red-Govern 0.1.0a3?"
+  ]
+}

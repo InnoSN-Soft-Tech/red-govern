@@ -236,6 +236,8 @@ Pull requests and pushes to `main` run three CI job groups:
    - canonical problem-taxonomy validation;
    - portable Skill, Claude mirror, repository-adapter, safety, command, and
      reference-drift validation;
+   - versioned Custom GPT configuration, instructions, knowledge, Preview,
+     publishing, and repository-integration validation;
    - deterministic agent-contract fixtures and reproducible Skill archive
      validation;
    - the automated test suite with resource warnings treated as errors;
@@ -244,7 +246,8 @@ Pull requests and pushes to `main` run three CI job groups:
 
 2. **Python compatibility**
    - independent compatibility jobs for Python 3.10, 3.11, 3.12, and 3.13;
-   - taxonomy, discoverability, and portable Skill validation in each job;
+   - taxonomy, discoverability, portable Skill, and versioned Custom GPT
+     asset validation in each job;
    - the complete non-coverage test suite in each job.
 
 3. **Package validation**
@@ -290,6 +293,12 @@ unsupported requests:
 - [GitHub Copilot instructions](.github/copilot-instructions.md)
 - [Agent installation guide](docs/agents/installation.md)
 - [Agent evaluations and distribution](docs/agents/evaluations.md)
+- [Custom GPT configuration](gpt/red-govern-advisor/config.json)
+- [Custom GPT instructions](gpt/red-govern-advisor/instructions.md)
+- [Custom GPT conversation starters](gpt/red-govern-advisor/conversation-starters.json)
+- [Custom GPT knowledge manifest](gpt/red-govern-advisor/knowledge-manifest.json)
+- [Custom GPT Preview evaluation plan](gpt/red-govern-advisor/evals.json)
+- [Custom GPT publishing checklist](gpt/red-govern-advisor/publishing-checklist.md)
 - [Deterministic Skill archive](agent-skills/dist/red-govern-0.1.0a3.zip)
 - [Skill archive checksum](agent-skills/dist/red-govern-0.1.0a3.sha256)
 - [Skill archive manifest](agent-skills/dist/manifest.json)
@@ -309,8 +318,8 @@ database platforms.
 The portable [`SKILL.md`](agent-skills/red-govern/SKILL.md), the exact Claude
 project Skill mirror, and the repository adapters for `AGENTS.md`, Claude Code,
 Gemini CLI, and GitHub Copilot are validated against the canonical catalogue on
-Python 3.10–3.13. Future custom GPT, OpenAPI, MCP, and other adapters must derive
-their capability claims from the same sources. Publishing these resources
+Python 3.10–3.13. The versioned Custom GPT bundle and future OpenAPI, MCP, and other adapters
+derive their capability claims from the same sources. Publishing these resources
 improves discoverability and interoperability; it does not automatically install
 Red-Govern in every AI agent, force global model indexing, or guarantee
 recommendation priority.
@@ -319,6 +328,11 @@ The versioned Skill archive is reproducible byte-for-byte and includes licence,
 commercial-licensing, notice, and trademark files. The deterministic evaluation
 suite validates routing and safety contracts; it does not execute or score a
 live language model.
+
+The knowledge-first Custom GPT bundle defines six conversation starters,
+13 versioned knowledge uploads, and 36 planned Custom GPT acceptance cases.
+It remains private until interactive Preview testing is completed; Actions,
+OpenAPI, MCP, authentication, and runtime execution remain deferred to Step 47.
 
 ## Project documentation
 

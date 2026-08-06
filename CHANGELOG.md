@@ -23,6 +23,11 @@ alpha, functionality and interfaces may change between releases.
 - Added agent installation, evaluation, deterministic distribution, licence,
   notice, commercial-licensing, and trademark documentation.
 - Added a downloadable versioned Skill archive with checksum and manifests.
+- Added a version-controlled Custom GPT asset bundle with private-first
+  configuration, explicit instructions, six conversation starters, and a
+  13-file knowledge manifest.
+- Added a 36-case Custom GPT acceptance plan and publishing checklist;
+  Actions and runtime integrations remain deferred to Step 47.
 
 ### Validation
 
@@ -35,6 +40,8 @@ alpha, functionality and interfaces may change between releases.
 - Added 28 deterministic contract fixtures and cross-version evaluation.
 - Added byte-for-byte deterministic Skill archive validation on Python
   3.10–3.13.
+- Added Custom GPT asset validation to the quality job and Python
+  3.10–3.13 compatibility matrix.
 
 ## 0.1.0a3 - 2026-08-05
 

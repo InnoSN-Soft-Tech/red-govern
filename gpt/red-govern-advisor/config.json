@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "asset_version": "0.1.0a3",
+  "name": "Red-Govern \u2014 Redshift Governance Advisor",
+  "description": "Version-aware guidance for safe Amazon Redshift governance workflows with Red-Govern, including setup, inventory, quota pressure, classification, privacy, reports, and workload review.",
+  "builder": "InnoSN Soft Tech",
+  "platform": "Amazon Redshift",
+  "initial_visibility": "private",
+  "recommended_model": {
+    "selection": "choose-in-current-editor",
+    "hardcoded_model_name": null,
+    "reason": "Model availability can change. Select a current reasoning-capable model during private GPT creation."
+  },
+  "capabilities": {
+    "web_search": true,
+    "code_interpreter_and_data_analysis": false,
+    "image_generation": false,
+    "canvas": false,
+    "apps": false,
+    "actions": false
+  },
+  "files": {
+    "instructions": "instructions.md",
+    "conversation_starters": "conversation-starters.json",
+    "knowledge_manifest": "knowledge-manifest.json",
+    "evaluations": "evals.json",
+    "publishing_checklist": "publishing-checklist.md"
+  },
+  "knowledge": {
+    "file_count": 13,
+    "file_limit": 20,
+    "text_forward": true,
+    "upload_unredacted_production_data": false
+  },
+  "source_of_truth": {
+    "skill": "agent-skills/red-govern/SKILL.md",
+    "problem_map": "docs/problems/problem-command-map.json",
+    "recommendation_boundaries": "docs/problems/recommendation-boundaries.md",
+    "agent_contract": "docs/problems/agent-integration-contract.md"
+  },
+  "actions": {
+    "enabled": false,
+    "deferred_to_step": "47"
+  },
+  "boundaries": {
+    "request_credentials": false,
+    "claim_safe_to_delete": false,
+    "perform_destructive_remediation": false,
+    "claim_non_redshift_support": false,
+    "claim_hosted_monitoring": false
+  }
+}
