@@ -8,6 +8,14 @@ alpha, functionality and interfaces may change between releases.
 
 ## Unreleased
 
+### API
+
+- Added a typed, presentation-independent Python API for version inspection,
+  configuration validation, redacted effective configuration, and structured
+  privacy auditing.
+- Kept the first API contract offline-safe: no Redshift connection, file
+  writes, MCP dependency, model execution, or OpenAI API key is required.
+
 ### Documentation
 
 - Added a concise `llms.txt` documentation index with canonical capability,

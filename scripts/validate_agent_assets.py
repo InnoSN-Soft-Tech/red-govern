@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ast
 import hashlib
 import json
 import re
@@ -13,6 +14,7 @@ PORTABLE_ROOT = ROOT / "agent-skills" / "red-govern"
 SKILL_PATH = PORTABLE_ROOT / "SKILL.md"
 REFERENCE_ROOT = PORTABLE_ROOT / "references"
 CLAUDE_ROOT = ROOT / ".claude" / "skills" / "red-govern"
+API_PATH = ROOT / "src" / "red_govern" / "api.py"
 
 EVALUATION_PATH = (
     ROOT / "agent-skills" / "evals" / "red-govern-cases.json"
@@ -70,6 +72,7 @@ ADAPTER_PATHS = {
 AGENT_DOC_PATHS = [
     ROOT / "docs" / "agents" / "index.md",
     ROOT / "docs" / "agents" / "installation.md",
+    ROOT / "docs" / "agents" / "api.md",
     ROOT / "docs" / "agents" / "evaluations.md",
 ]
 
@@ -440,6 +443,94 @@ def validate_repository_instructions() -> None:
                 fail(f"{name} adapter omits: {required}")
 
 
+def validate_internal_api_contract() -> None:
+    """Validate the first typed, offline-safe Python API surface."""
+    if not API_PATH.is_file():
+        fail(f"Typed Python API is missing: {API_PATH}")
+
+    text = API_PATH.read_text(encoding="utf-8")
+    tree = ast.parse(text)
+
+    public_functions = {
+        node.name
+        for node in tree.body
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        and not node.name.startswith("_")
+    }
+    expected_functions = {
+        "get_version",
+        "validate_config",
+        "get_redacted_config",
+        "run_privacy_audit",
+    }
+
+    if public_functions != expected_functions:
+        fail(
+            "Typed Python API function set differs. "
+            f"Expected {sorted(expected_functions)}, "
+            f"got {sorted(public_functions)}."
+        )
+
+    imports: set[str] = set()
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            imports.update(
+                alias.name.split(".", 1)[0] for alias in node.names
+            )
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            imports.add(node.module.split(".", 1)[0])
+
+    forbidden_imports = {"typer", "rich", "mcp", "openai", "fastapi"}
+    unexpected_imports = imports & forbidden_imports
+
+    if unexpected_imports:
+        fail(
+            "Typed Python API imports presentation or runtime adapters: "
+            f"{sorted(unexpected_imports)}"
+        )
+
+    exports: object | None = None
+
+    for node in tree.body:
+        if not isinstance(node, ast.Assign):
+            continue
+
+        if not any(
+            isinstance(target, ast.Name) and target.id == "__all__"
+            for target in node.targets
+        ):
+            continue
+
+        exports = ast.literal_eval(node.value)
+        break
+
+    expected_exports = {
+        "ConfigValidationResult",
+        "PrivacyAuditApiResult",
+        "PrivacyAuditFindingResult",
+        "RedactedConfigResult",
+        "VersionResult",
+        "get_redacted_config",
+        "get_version",
+        "run_privacy_audit",
+        "validate_config",
+    }
+
+    if not isinstance(exports, list) or set(exports) != expected_exports:
+        fail("Typed Python API export set differs.")
+
+    for required in (
+        "without connecting to Amazon Redshift or writing files",
+        "ConfigurationError",
+        "redact_mapping",
+        "redact_text",
+        "Environment variable configured",
+    ):
+        if required not in text:
+            fail(f"Typed Python API omits contract text: {required}")
+
+
 def validate_evaluation_and_docs() -> None:
     """Validate evaluation metadata, installation docs, and legal text."""
     suite = load_json_object(EVALUATION_PATH)
@@ -466,6 +557,28 @@ def validate_evaluation_and_docs() -> None:
 
         if not text.endswith("\n"):
             fail(f"Agent documentation lacks final newline: {path}")
+
+api_doc = normalize_text(
+    (ROOT / "docs" / "agents" / "api.md").read_text(
+        encoding="utf-8"
+    )
+)
+
+for required in (
+    "Red-Govern 0.1.0a3",
+    "`get_version()`",
+    "`validate_config(path)`",
+    "`get_redacted_config(path=None)`",
+    "`run_privacy_audit(path)`",
+    "`ConfigurationError`",
+    "does not connect to Amazon Redshift",
+    "does not write files",
+    "does not prove that an object is safe to delete",
+    "does not perform destructive remediation",
+    "MCP remains deferred to Step 47.1B",
+):
+    if normalize_text(required) not in api_doc:
+        fail(f"Typed Python API documentation omits: {required}")
 
     if not DISTRIBUTION_README.is_file():
         fail("Distribution README is missing.")
@@ -538,6 +651,7 @@ def main() -> int:
     allowed, status_counts = validate_problem_map()
     metadata = validate_skill_text(allowed)
     validate_repository_instructions()
+    validate_internal_api_contract()
     validate_evaluation_and_docs()
     validate_distribution_metadata()
 
@@ -554,7 +668,8 @@ def main() -> int:
     print("Claude project Skill files: 5")
     print("Repository instruction files: 4")
     print("Evaluation cases: 28")
-    print("Agent documentation files: 3")
+    print("Agent documentation files: 4")
+    print("Typed Python API functions: 4")
     print("Distribution legal files: 4")
     print("Cross-agent drift: none")
     print("Portable agent-asset validation passed.")
