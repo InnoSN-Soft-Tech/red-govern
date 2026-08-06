@@ -78,10 +78,15 @@ html = [
     "jinja2>=3.1,<4",
 ]
 
+mcp = [
+    "mcp>=2.0,<3",
+]
+
 all = [
     "openpyxl>=3.1,<4",
     "boto3>=1.34,<2",
     "jinja2>=3.1,<4",
+    "mcp>=2.0,<3",
 ]
 
 dev = [
@@ -95,10 +100,12 @@ dev = [
     "types-PyYAML>=6,<7",
     "types-openpyxl>=3.1.5,<4",
     "tomli>=2,<3; python_version < '3.11'",
+    "mcp>=2.0,<3",
 ]
 
 [project.scripts]
 red-govern = "red_govern.cli.app:app"
+red-govern-mcp = "red_govern.mcp_server:main"
 
 [project.urls]
 Homepage = "https://github.com/InnoSN-Soft-Tech/red-govern"

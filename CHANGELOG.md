@@ -10,6 +10,8 @@ alpha, functionality and interfaces may change between releases.
 
 ### API
 
+- Added an optional local stdio MCP adapter exposing four structured, offline-safe configuration and privacy tools over the typed Python API.
+- Kept MCP outside the base dependency set and limited the first adapter to local stdio with no Redshift connection, SQL execution, file-writing tool, hosted transport, or OpenAI API key.
 - Added a typed, presentation-independent Python API for version inspection,
   configuration validation, redacted effective configuration, and structured
   privacy auditing.
@@ -18,6 +20,7 @@ alpha, functionality and interfaces may change between releases.
 
 ### Documentation
 
+- Added local stdio MCP installation, client-configuration, tool, and safety-boundary documentation.
 - Added a concise `llms.txt` documentation index with canonical capability,
   safety, package, and trust links.
 - Added Schema.org `SoftwareApplication` JSON-LD, complete Open Graph metadata,
@@ -40,6 +43,7 @@ alpha, functionality and interfaces may change between releases.
 
 ### Validation
 
+- Added in-memory MCP protocol tests and deterministic validation for the exact tool set, structured outputs, sanitized errors, stdio-only transport, and dependency boundary.
 - Added discoverability-asset validation to the quality job and Python
   3.10–3.13 compatibility matrix.
 - Added strict portable Skill metadata, command, safety, version, and reference

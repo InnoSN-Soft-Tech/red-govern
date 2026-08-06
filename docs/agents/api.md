@@ -3,9 +3,9 @@
 Red-Govern 0.1.0a3 provides a small, presentation-independent Python API for
 offline-safe configuration and privacy operations.
 
-This API is the shared contract planned for the CLI, the future local MCP
-adapter, and later agent integrations. It does not connect to Amazon Redshift
-and does not write files.
+This API is the shared contract for the CLI, the local stdio MCP adapter, and
+later agent integrations. It does not connect to Amazon Redshift and does not
+write files.
 
 ## Supported functions
 
@@ -80,7 +80,8 @@ print(audit.model_dump(mode="json"))
 - It does not prove that an object is safe to delete.
 - It does not perform destructive remediation.
 - Operational collection functions remain outside this first API contract.
-- MCP remains deferred to Step 47.1B.
+- Local stdio MCP reuses this typed API without expanding its authority; see
+  [Local stdio MCP](mcp.md).
 
 Use documentation and API behavior that match the installed package version.
 The current contract targets Red-Govern 0.1.0a3.

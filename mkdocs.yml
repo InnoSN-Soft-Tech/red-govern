@@ -45,6 +45,7 @@ nav:
       - Overview: agents/index.md
       - Installation: agents/installation.md
       - Python API: agents/api.md
+      - Local stdio MCP: agents/mcp.md
       - Evaluations and distribution: agents/evaluations.md
   - Redshift:
       - Compatibility: compatibility.md

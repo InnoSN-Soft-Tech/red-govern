@@ -15,6 +15,7 @@ SKILL_PATH = PORTABLE_ROOT / "SKILL.md"
 REFERENCE_ROOT = PORTABLE_ROOT / "references"
 CLAUDE_ROOT = ROOT / ".claude" / "skills" / "red-govern"
 API_PATH = ROOT / "src" / "red_govern" / "api.py"
+MCP_PATH = ROOT / "src" / "red_govern" / "mcp_server.py"
 
 EVALUATION_PATH = (
     ROOT / "agent-skills" / "evals" / "red-govern-cases.json"
@@ -73,6 +74,7 @@ AGENT_DOC_PATHS = [
     ROOT / "docs" / "agents" / "index.md",
     ROOT / "docs" / "agents" / "installation.md",
     ROOT / "docs" / "agents" / "api.md",
+    ROOT / "docs" / "agents" / "mcp.md",
     ROOT / "docs" / "agents" / "evaluations.md",
 ]
 
@@ -473,13 +475,17 @@ def validate_internal_api_contract() -> None:
 
     imports: set[str] = set()
 
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
+    for imported_node in ast.walk(tree):
+        if isinstance(imported_node, ast.Import):
             imports.update(
-                alias.name.split(".", 1)[0] for alias in node.names
+                alias.name.split(".", 1)[0]
+                for alias in imported_node.names
             )
-        elif isinstance(node, ast.ImportFrom) and node.module:
-            imports.add(node.module.split(".", 1)[0])
+        elif (
+            isinstance(imported_node, ast.ImportFrom)
+            and imported_node.module
+        ):
+            imports.add(imported_node.module.split(".", 1)[0])
 
     forbidden_imports = {"typer", "rich", "mcp", "openai", "fastapi"}
     unexpected_imports = imports & forbidden_imports
@@ -531,6 +537,135 @@ def validate_internal_api_contract() -> None:
             fail(f"Typed Python API omits contract text: {required}")
 
 
+
+def validate_local_mcp_contract() -> None:
+    """Validate the local stdio MCP adapter and its documentation."""
+    if not MCP_PATH.is_file():
+        fail(f"Local stdio MCP adapter is missing: {MCP_PATH}")
+
+    text = MCP_PATH.read_text(encoding="utf-8")
+    tree = ast.parse(text)
+    tool_names: set[str] = set()
+
+    for node in tree.body:
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+
+        for decorator in node.decorator_list:
+            if not isinstance(decorator, ast.Call):
+                continue
+
+            function = decorator.func
+
+            if not (
+                isinstance(function, ast.Attribute)
+                and isinstance(function.value, ast.Name)
+                and function.value.id == "mcp"
+                and function.attr == "tool"
+            ):
+                continue
+
+            for keyword in decorator.keywords:
+                if keyword.arg != "name":
+                    continue
+
+                value = keyword.value
+
+                if (
+                    isinstance(value, ast.Constant)
+                    and isinstance(value.value, str)
+                ):
+                    tool_names.add(value.value)
+
+    expected_tools = {
+        "red_govern_get_redacted_config",
+        "red_govern_get_version",
+        "red_govern_run_privacy_audit",
+        "red_govern_validate_config",
+    }
+
+    if tool_names != expected_tools:
+        fail(
+            "Local stdio MCP tool set differs. "
+            f"Expected {sorted(expected_tools)}, got {sorted(tool_names)}."
+        )
+
+    imports: set[str] = set()
+
+    for imported_node in ast.walk(tree):
+        if isinstance(imported_node, ast.Import):
+            imports.update(
+                alias.name.split(".", 1)[0]
+                for alias in imported_node.names
+            )
+        elif (
+            isinstance(imported_node, ast.ImportFrom)
+            and imported_node.module
+        ):
+            imports.add(imported_node.module.split(".", 1)[0])
+
+    if "mcp" not in imports or "red_govern" not in imports:
+        fail("Local stdio MCP must import the MCP SDK and typed Red-Govern API.")
+
+    forbidden_imports = {
+        "fastapi",
+        "openai",
+        "redshift_connector",
+        "rich",
+        "typer",
+        "uvicorn",
+    }
+    unexpected_imports = imports & forbidden_imports
+
+    if unexpected_imports:
+        fail(
+            "Local stdio MCP imports forbidden runtime surfaces: "
+            f"{sorted(unexpected_imports)}"
+        )
+
+    for required in (
+        'mcp.run("stdio")',
+        "does not connect to Amazon Redshift",
+        "execute SQL",
+        "write files",
+        "safe to delete",
+        "destructive remediation",
+    ):
+        if required not in text:
+            fail(f"Local stdio MCP omits contract text: {required}")
+
+    for forbidden in (
+        "run_sse",
+        "run_streamable_http",
+        'mcp.run("sse")',
+        'mcp.run("streamable-http")',
+    ):
+        if forbidden in text:
+            fail(f"Local stdio MCP includes a hosted transport: {forbidden}")
+
+    mcp_doc_path = ROOT / "docs" / "agents" / "mcp.md"
+
+    if not mcp_doc_path.is_file():
+        fail(f"Local stdio MCP documentation is missing: {mcp_doc_path}")
+
+    mcp_doc = normalize_text(mcp_doc_path.read_text(encoding="utf-8"))
+
+    for required in (
+        'red-govern[mcp]==0.1.0a3',
+        "red-govern-mcp",
+        "local stdio",
+        "red_govern_get_version",
+        "red_govern_validate_config",
+        "red_govern_get_redacted_config",
+        "red_govern_run_privacy_audit",
+        "does not connect to Amazon Redshift",
+        "does not perform destructive remediation",
+        "does not prove that a table or other object is safe to delete",
+    ):
+        if normalize_text(required) not in mcp_doc:
+            fail(f"Local stdio MCP documentation omits: {required}")
+
+
 def validate_evaluation_and_docs() -> None:
     """Validate evaluation metadata, installation docs, and legal text."""
     suite = load_json_object(EVALUATION_PATH)
@@ -575,7 +710,7 @@ for required in (
     "does not write files",
     "does not prove that an object is safe to delete",
     "does not perform destructive remediation",
-    "MCP remains deferred to Step 47.1B",
+    "Local stdio MCP reuses this typed API",
 ):
     if normalize_text(required) not in api_doc:
         fail(f"Typed Python API documentation omits: {required}")
@@ -652,6 +787,7 @@ def main() -> int:
     metadata = validate_skill_text(allowed)
     validate_repository_instructions()
     validate_internal_api_contract()
+    validate_local_mcp_contract()
     validate_evaluation_and_docs()
     validate_distribution_metadata()
 
@@ -668,7 +804,8 @@ def main() -> int:
     print("Claude project Skill files: 5")
     print("Repository instruction files: 4")
     print("Evaluation cases: 28")
-    print("Agent documentation files: 4")
+    print("Agent documentation files: 5")
+    print("Local stdio MCP tools: 4")
     print("Typed Python API functions: 4")
     print("Distribution legal files: 4")
     print("Cross-agent drift: none")
