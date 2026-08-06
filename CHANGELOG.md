@@ -46,6 +46,9 @@ alpha, functionality and interfaces may change between releases.
 - Hardened Custom GPT Preview contracts for the exact command allowlist,
   pinned alpha installation, version-mismatch handling, and uploaded-source
   citation after the initial 5/8 manual Preview round.
+- Synchronized editor-safe Custom GPT instructions at 5,195 characters,
+  enforced the 8,000-character editor limit and exact instruction digest,
+  and recorded the successful 8/8 manual Preview acceptance.
 
 ## 0.1.0a3 - 2026-08-05
 

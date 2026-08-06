@@ -21,6 +21,9 @@ CHECKLIST_PATH = GPT_ROOT / "publishing-checklist.md"
 
 EXPECTED_VERSION = "0.1.0a3"
 EXPECTED_NAME = "Red-Govern — Redshift Governance Advisor"
+EXPECTED_INSTRUCTION_CHARACTER_LIMIT = 8000
+EXPECTED_INSTRUCTION_CHARACTER_COUNT = 5195
+EXPECTED_INSTRUCTION_SHA256 = "d29662f28cf4fe8ea2addd60eb95b68d9d408673a6391ff2320692ba6b8019ef"
 EXPECTED_KNOWLEDGE_LIMIT = 10
 EXPECTED_KNOWLEDGE_LIMIT_CHECKED_AT = "2026-08-06"
 EXPECTED_KNOWLEDGE_LIMIT_SOURCE = (
@@ -130,60 +133,55 @@ EXPECTED_INTERACTIVE_CONTRACTS = (
 )
 
 REQUIRED_INSTRUCTION_HEADINGS = [
-    "Role and audience",
-    "Source precedence",
-    "Activation and scope",
-    "Required intake",
-    "Problem classification workflow",
-    "Command guidance",
-    "Safety and privacy boundaries",
-    "Version behavior",
-    "Web-search policy",
-    "Knowledge citation policy",
+    "Mission and scope",
+    "Source priority",
+    "Minimum intake and privacy",
+    "Problem workflow",
+    "Exact command policy",
+    "Version mismatch",
+    "Safety boundaries",
+    "Knowledge citations",
     "Response contract",
-    "Unsupported and conditional requests",
-    "Actions and execution boundary",
-    "Final response check",
 ]
 
 REQUIRED_INSTRUCTION_TEXT = [
+    "This GPT targets **Red-Govern 0.1.0a3**, an alpha release.",
+    (
+        "Treat uploaded Red-Govern knowledge as canonical for version facts, "
+        "commands, statuses, workflows, compatibility, and safety boundaries."
+    ),
     (
         "Never request passwords, tokens, private endpoints, connection "
         "strings, or unredacted production reports."
     ),
-    "Never claim that Red-Govern proves an object is safe to delete.",
-    "Red-Govern does not perform destructive remediation.",
     (
-        "Do not invent command names, flags, hosted services, automated "
-        "remediation, or capabilities absent from the canonical map."
+        "Each `allowed_commands` value is a complete command, not a prefix."
     ),
-    "The uploaded bundle describes Red-Govern 0.1.0a3.",
-    "Actions are disabled in this Custom GPT version.",
-    "deferred to Step 47",
-    "Web Search is enabled for freshness checks.",
+    (
+        "Never append `--help`, flags, placeholders such as `<command>`, "
+        "subcommands, or other extensions."
+    ),
+    "python -m pip install red-govern==0.1.0a3",
+    (
+        "recommend only `red-govern version` from the uploaded bundle until "
+        "official version-matched documentation is verified"
+    ),
+    "Never claim Red-Govern proves an object is safe to delete.",
+    "It does not perform destructive remediation.",
+    (
+        "For a third-party claim about a Red-Govern command or capability, "
+        "explicitly cite the canonical uploaded source."
+    ),
     (
         "[09-problem-command-map.json — "
         "docs/problems/problem-command-map.json]"
     ),
     (
-        "Treat each value in the canonical `allowed_commands` collection "
-        "as a complete, exact command string—not as a prefix."
+        "[10-recommendation-boundaries.md — "
+        "docs/problems/recommendation-boundaries.md]"
     ),
-    (
-        "do not append flags such as `--help`, add placeholder tokens "
-        "such as `<command>`, add subcommands, or extend an allowlisted "
-        "command in any way."
-    ),
-    "python -m pip install red-govern==0.1.0a3",
-    (
-        "recommend only `red-govern version` from the uploaded bundle "
-        "until official version-matched documentation is verified"
-    ),
-    (
-        "When a user asks whether a third-party claim about a Red-Govern "
-        "command or capability is true, explicitly cite the canonical "
-        "uploaded source in the response."
-    ),
+    "Actions are disabled.",
+    "deferred to Step 47",
 ]
 
 REQUIRED_CHECKLIST_HEADINGS = [
@@ -496,6 +494,26 @@ def validate_instructions(allowed_commands: set[str]) -> None:
     """Validate instruction structure, safety text, and command usage."""
     text = INSTRUCTIONS_PATH.read_text(encoding="utf-8")
 
+    if len(text) > EXPECTED_INSTRUCTION_CHARACTER_LIMIT:
+        fail(
+            "Custom GPT instructions exceed the editor character limit: "
+            f"{len(text)} > {EXPECTED_INSTRUCTION_CHARACTER_LIMIT}."
+        )
+
+    if len(text) != EXPECTED_INSTRUCTION_CHARACTER_COUNT:
+        fail(
+            "Custom GPT instruction character count differs: "
+            f"{len(text)} != {EXPECTED_INSTRUCTION_CHARACTER_COUNT}."
+        )
+
+    digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+    if digest != EXPECTED_INSTRUCTION_SHA256:
+        fail(
+            "Custom GPT instruction SHA-256 differs: "
+            f"{digest} != {EXPECTED_INSTRUCTION_SHA256}."
+        )
+
     if not text.endswith("\n"):
         fail("Custom GPT instructions lack a final newline.")
 
@@ -703,6 +721,7 @@ def validate_repository_integration() -> None:
         "10-file knowledge manifest",
         "Custom GPT asset validation",
         "Hardened Custom GPT Preview contracts",
+        "Synchronized editor-safe Custom GPT instructions",
     ):
         if phrase not in changelog:
             fail(f"CHANGELOG omits Custom GPT entry: {phrase}")
@@ -728,6 +747,11 @@ def main() -> None:
     print(f"Custom GPT name: {config['name']}")
     print(f"Package version: {config['asset_version']}")
     print("Custom GPT files: 6")
+    print(
+        "Instruction characters: "
+        f"{EXPECTED_INSTRUCTION_CHARACTER_COUNT}/"
+        f"{EXPECTED_INSTRUCTION_CHARACTER_LIMIT}"
+    )
     print("Knowledge files: 10")
     print("Deterministic/interactive/total cases: 28/8/36")
     print("Web search: enabled")
