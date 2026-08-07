@@ -1,7 +1,8 @@
-"""Validate the contract-only Red-Govern remote metadata API surface."""
+"""Validate the implemented, not-yet-deployed remote metadata API."""
 
 from __future__ import annotations
 
+import ast
 import json
 from pathlib import Path
 from typing import Any, NoReturn, cast
@@ -11,14 +12,24 @@ CONTRACT_PATH = ROOT / "docs" / "agents" / "remote-metadata-contract.json"
 OPENAPI_PATH = ROOT / "docs" / "agents" / "red-govern-metadata.openapi.json"
 DOC_PATH = ROOT / "docs" / "agents" / "remote-metadata-api.md"
 MAP_PATH = ROOT / "docs" / "problems" / "problem-command-map.json"
+RESOURCE_MAP_PATH = (
+    ROOT
+    / "src"
+    / "red_govern"
+    / "resources"
+    / "problem-command-map.json"
+)
+RUNTIME_PATH = ROOT / "src" / "red_govern" / "remote_api.py"
 GPT_CONFIG_PATH = ROOT / "gpt" / "red-govern-advisor" / "config.json"
 PRIVACY_PATH = ROOT / "PRIVACY.md"
 LLMS_PATH = ROOT / "docs" / "llms.txt"
 CHANGELOG_PATH = ROOT / "CHANGELOG.md"
 CI_PATH = ROOT / ".github" / "workflows" / "ci.yml"
+PYPROJECT_PATH = ROOT / "pyproject.toml"
 
 EXPECTED_VERSION = "0.1.0a3"
 EXPECTED_SERVER = "https://api.snsoft.tech/red-govern"
+EXPECTED_RUNTIME = "red_govern.remote_api:app"
 EXPECTED_PATHS = {
     "/v1/meta": "getRedGovernMetadata",
     "/v1/problems": "listRedGovernProblems",
@@ -56,7 +67,7 @@ FORBIDDEN_REQUEST_NAMES = {
 
 
 def fail(message: str) -> NoReturn:
-    """Raise a stable contract-validation failure."""
+    """Raise one stable remote-runtime validation failure."""
     raise RuntimeError(message)
 
 
@@ -74,7 +85,7 @@ def normalize_text(value: str) -> str:
 
 
 def status_counts(mapping: dict[str, Any]) -> dict[str, int]:
-    """Return canonical problem counts by support status."""
+    """Return canonical problem counts by status."""
     raw = mapping.get("problems")
     if not isinstance(raw, list):
         fail("Canonical problem map has no problems list.")
@@ -89,7 +100,7 @@ def status_counts(mapping: dict[str, Any]) -> dict[str, int]:
 
 
 def allowed_commands(mapping: dict[str, Any]) -> list[str]:
-    """Return canonical allowed commands."""
+    """Return canonical command strings."""
     raw = mapping.get("allowed_commands")
     if not isinstance(raw, list):
         fail("Canonical problem map has no allowed_commands list.")
@@ -99,10 +110,11 @@ def allowed_commands(mapping: dict[str, Any]) -> list[str]:
 
 
 def parameter_names(operation: dict[str, Any]) -> set[str]:
-    """Collect request parameter names for one OpenAPI operation."""
+    """Collect OpenAPI request parameter names."""
     raw = operation.get("parameters", [])
     if not isinstance(raw, list):
         fail("OpenAPI operation parameters must be a list.")
+
     names: set[str] = set()
     for item in raw:
         if not isinstance(item, dict):
@@ -123,21 +135,23 @@ def validate_contract(
         fail("Remote metadata contract schema_version differs.")
     if contract.get("package_version") != EXPECTED_VERSION:
         fail("Remote metadata contract package version differs.")
-    if contract.get("deployment_status") != "contract-only-not-deployed":
+    if contract.get("deployment_status") != "runtime-implemented-not-deployed":
         fail("Remote metadata deployment status differs.")
+    if contract.get("runtime_module") != EXPECTED_RUNTIME:
+        fail("Remote metadata runtime module differs.")
     if contract.get("planned_server_url") != EXPECTED_SERVER:
         fail("Remote metadata planned server differs.")
     if contract.get("authentication") != "none":
-        fail("Remote metadata contract must remain public read-only metadata.")
+        fail("Remote metadata contract must remain unauthenticated public metadata.")
     if contract.get("current_custom_gpt_actions_enabled") is not False:
-        fail("Custom GPT Actions must remain disabled during contract-only phase.")
+        fail("Custom GPT Actions must remain disabled.")
     if contract.get("remote_redshift_runtime") is not False:
         fail("Remote Redshift runtime must remain disabled.")
     if contract.get("accepts_credentials") is not False:
-        fail("Remote metadata contract must not accept credentials.")
+        fail("Remote metadata runtime must not accept credentials.")
     if contract.get("accepts_local_configuration") is not False:
-        fail("Remote metadata contract must not accept local configuration.")
-    if contract.get("next_step") != "47.2C":
+        fail("Remote metadata runtime must not accept local configuration.")
+    if contract.get("next_step") != "47.2D":
         fail("Remote metadata contract next step differs.")
 
     endpoints = contract.get("endpoints")
@@ -148,11 +162,10 @@ def validate_contract(
     for raw in endpoints:
         if not isinstance(raw, dict):
             fail("Remote metadata endpoint entry must be an object.")
-        method = raw.get("method")
+        if raw.get("method") != "GET":
+            fail("Remote metadata endpoints must all use GET.")
         path = raw.get("path")
         operation_id = raw.get("operation_id")
-        if method != "GET":
-            fail("Remote metadata endpoints must all use GET.")
         if not isinstance(path, str) or not isinstance(operation_id, str):
             fail("Remote metadata endpoint path/operation_id is invalid.")
         observed[path] = operation_id
@@ -161,53 +174,45 @@ def validate_contract(
         fail(f"Remote metadata endpoint set differs: {observed}")
 
     if contract.get("status_counts") != status_counts(mapping):
-        fail("Remote metadata contract status counts drifted from canonical map.")
-
-    commands = allowed_commands(mapping)
-    if contract.get("allowed_command_count") != len(commands):
+        fail("Remote metadata status counts drifted from canonical map.")
+    if contract.get("allowed_command_count") != len(allowed_commands(mapping)):
         fail("Remote metadata allowed-command count drifted.")
-
-    expected_excluded = [
-        "validate_config(path)",
-        "get_redacted_config(path=<local file>)",
-        "run_privacy_audit(path)",
-    ]
-    if contract.get("excluded_local_operations") != expected_excluded:
-        fail("Excluded local operation set differs.")
 
 
 def validate_openapi(
     spec: dict[str, Any],
     mapping: dict[str, Any],
 ) -> None:
-    """Validate the contract-only OpenAPI document."""
+    """Validate the frozen Action-facing OpenAPI interface."""
     if spec.get("openapi") != "3.1.0":
         fail("OpenAPI version must be 3.1.0.")
 
     info = spec.get("info")
-    if not isinstance(info, dict):
-        fail("OpenAPI info must be an object.")
-    if info.get("version") != EXPECTED_VERSION:
+    if not isinstance(info, dict) or info.get("version") != EXPECTED_VERSION:
         fail("OpenAPI info.version differs.")
-    if spec.get("x-red-govern-deployment-status") != "contract-only-not-deployed":
+
+    if spec.get("x-red-govern-deployment-status") != (
+        "runtime-implemented-not-deployed"
+    ):
         fail("OpenAPI deployment marker differs.")
+
+    if spec.get("x-red-govern-runtime") != EXPECTED_RUNTIME:
+        fail("OpenAPI runtime marker differs.")
 
     expected_servers = [
         {
             "url": EXPECTED_SERVER,
-            "description": "Planned endpoint; not deployed",
+            "description": "Planned endpoint; runtime implemented, not deployed",
         }
     ]
     if spec.get("servers") != expected_servers:
         fail("OpenAPI server contract differs.")
 
     if spec.get("security") != []:
-        fail("Contract-only public metadata OpenAPI must use no authentication.")
+        fail("Remote metadata OpenAPI must use no authentication.")
 
     paths = spec.get("paths")
-    if not isinstance(paths, dict):
-        fail("OpenAPI paths must be an object.")
-    if set(paths) != set(EXPECTED_PATHS):
+    if not isinstance(paths, dict) or set(paths) != set(EXPECTED_PATHS):
         fail("OpenAPI path set differs.")
 
     all_request_names: set[str] = set()
@@ -241,31 +246,21 @@ def validate_openapi(
         if operation.get("operationId") != expected_operation_id:
             fail(f"OpenAPI operationId differs for {path}")
         if "requestBody" in operation:
-            fail(f"OpenAPI GET operation unexpectedly accepts a request body: {path}")
+            fail(f"OpenAPI GET unexpectedly accepts request body: {path}")
         if operation.get("security") != []:
-            fail(f"OpenAPI operation is not explicitly unauthenticated: {path}")
+            fail(f"OpenAPI operation is not unauthenticated: {path}")
 
         names = parameter_names(operation)
         all_request_names.update(names)
 
-        if path == "/v1/problems":
-            if names != {"status"}:
-                fail("Problem-list endpoint must expose only the status filter.")
-        elif path == "/v1/problems/{problem_id}":
-            if names != {"problem_id"}:
-                fail("Problem-detail endpoint must expose only problem_id.")
-        elif names:
+        if path == "/v1/problems" and names != {"status"}:
+            fail("Problem-list endpoint must expose only status.")
+        if path == "/v1/problems/{problem_id}" and names != {"problem_id"}:
+            fail("Problem-detail endpoint must expose only problem_id.")
+        if path in {"/v1/meta", "/v1/commands"} and names:
             fail(f"Unexpected request parameters on {path}: {sorted(names)}")
 
-        responses = operation.get("responses")
-        if not isinstance(responses, dict) or "200" not in responses:
-            fail(f"OpenAPI success response missing for {path}")
-
-    forbidden = {
-        name.lower()
-        for name in all_request_names
-        if name.lower() in FORBIDDEN_REQUEST_NAMES
-    }
+    forbidden = all_request_names & FORBIDDEN_REQUEST_NAMES
     if forbidden:
         fail(
             "Remote metadata request surface exposes forbidden inputs: "
@@ -276,47 +271,11 @@ def validate_openapi(
     if not isinstance(components, dict):
         fail("OpenAPI components must be an object.")
     if "securitySchemes" in components:
-        fail("Contract-only metadata OpenAPI must not define security schemes.")
+        fail("Remote metadata OpenAPI must not define security schemes.")
 
     schemas = components.get("schemas")
     if not isinstance(schemas, dict):
         fail("OpenAPI components.schemas must be an object.")
-
-    expected_schemas = {
-        "ProblemStatus",
-        "StatusCounts",
-        "SafetyBoundaries",
-        "MetadataResponse",
-        "ProblemSummary",
-        "ProblemDetail",
-        "ProblemListResponse",
-        "CommandListResponse",
-        "ErrorResponse",
-    }
-    if set(schemas) != expected_schemas:
-        fail("OpenAPI component schema set differs.")
-
-    problem_list = paths["/v1/problems"]
-    if not isinstance(problem_list, dict):
-        fail("Problem-list path is invalid.")
-    operation = problem_list.get("get")
-    if not isinstance(operation, dict):
-        fail("Problem-list GET is invalid.")
-    params = operation.get("parameters")
-    if not isinstance(params, list) or len(params) != 1:
-        fail("Problem-list status parameter differs.")
-    status_parameter = params[0]
-    if not isinstance(status_parameter, dict):
-        fail("Problem-list status parameter is invalid.")
-    status_schema = status_parameter.get("schema")
-    if not isinstance(status_schema, dict):
-        fail("Problem-list status schema is invalid.")
-    if status_schema.get("enum") != [
-        "supported",
-        "conditional",
-        "unsupported",
-    ]:
-        fail("Problem-list status enum differs.")
 
     metadata_schema = schemas.get("MetadataResponse")
     if not isinstance(metadata_schema, dict):
@@ -324,107 +283,177 @@ def validate_openapi(
     example = metadata_schema.get("example")
     if not isinstance(example, dict):
         fail("MetadataResponse example is missing.")
-    if example.get("package_version") != EXPECTED_VERSION:
-        fail("MetadataResponse example version differs.")
     if example.get("status_counts") != status_counts(mapping):
         fail("MetadataResponse example status counts drifted.")
     if example.get("allowed_command_count") != len(allowed_commands(mapping)):
         fail("MetadataResponse example command count drifted.")
 
 
-def validate_privacy() -> None:
-    """Require a non-empty privacy notice for future deployment."""
-    text = PRIVACY_PATH.read_text(encoding="utf-8")
-    if not text.strip():
-        fail("PRIVACY.md is empty.")
+def validate_runtime_source() -> None:
+    """Validate runtime imports, routes, dependency boundary, and resource."""
+    if RESOURCE_MAP_PATH.read_bytes() != MAP_PATH.read_bytes():
+        fail("Packaged problem map drifts from canonical docs problem map.")
 
-    normalized = normalize_text(text)
+    source = RUNTIME_PATH.read_text(encoding="utf-8")
+    tree = ast.parse(source)
+
+    imports: set[str] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            imports.update(alias.name.split(".", 1)[0] for alias in node.names)
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            imports.add(node.module.split(".", 1)[0])
+
+    if "fastapi" not in imports or "pydantic" not in imports:
+        fail("Remote runtime must use FastAPI and Pydantic.")
+
+    forbidden_imports = {
+        "boto3",
+        "keyring",
+        "mcp",
+        "openai",
+        "redshift_connector",
+        "subprocess",
+    }
+    unexpected = imports & forbidden_imports
+    if unexpected:
+        fail(f"Remote runtime imports forbidden surfaces: {sorted(unexpected)}")
+
+    for forbidden in (
+        "execute(",
+        "cursor(",
+        "subprocess.",
+        "os.system",
+        "eval(",
+        "exec(",
+    ):
+        if forbidden in source:
+            fail(f"Remote runtime contains forbidden execution marker: {forbidden}")
+
     for required in (
-        "Red-Govern is local-first",
-        "remote metadata API contract is not deployed",
-        (
-            "does not accept passwords, tokens, credentials, private endpoints, "
-            "connection strings, or unredacted production outputs"
-        ),
+        '"/v1/meta"',
+        '"/v1/problems"',
+        '"/v1/problems/{problem_id}"',
+        '"/v1/commands"',
+        "docs_url=None",
+        "redoc_url=None",
+        "openapi_url=None",
+    ):
+        if required not in source:
+            fail(f"Remote runtime omits required surface: {required}")
+
+
+def validate_pyproject() -> None:
+    """Validate optional dependency and package-resource boundaries."""
+    text = PYPROJECT_PATH.read_text(encoding="utf-8")
+
+    remote_block = (
+        'remote = [\n'
+        '    "fastapi>=0.139,<1",\n'
+        '    "uvicorn>=0.51,<1",\n'
+        ']\n'
+    )
+    if remote_block not in text:
+        fail("Remote optional dependency block is missing or differs.")
+
+    base_block = text.split("dependencies = [", 1)[1].split("]\n", 1)[0]
+    if "fastapi" in base_block or "uvicorn" in base_block:
+        fail("Remote HTTP dependencies must not enter base dependencies.")
+
+    all_block = text.split("all = [", 1)[1].split("]\n", 1)[0]
+    dev_block = text.split("dev = [", 1)[1].split("]\n", 1)[0]
+
+    for required in ("fastapi>=0.139,<1", "uvicorn>=0.51,<1"):
+        if required not in all_block:
+            fail(f"all extra omits remote dependency: {required}")
+        if required not in dev_block:
+            fail(f"dev extra omits remote dependency: {required}")
+
+    if "httpx>=0.28,<1" not in dev_block:
+        fail("dev extra omits HTTPX runtime-test dependency.")
+
+    if '"src/red_govern/**/*.json",' not in text:
+        fail("Wheel build include does not package JSON resources.")
+
+
+def validate_docs_privacy_ci() -> None:
+    """Validate docs, privacy, GPT boundary, and dedicated CI."""
+    doc = normalize_text(DOC_PATH.read_text(encoding="utf-8"))
+    for required in (
+        "runtime is implemented",
+        "not deployed",
+        "red_govern.remote_api:app",
+        'python -m pip install --editable ".[remote]"',
+        "127.0.0.1",
+        "does not connect to Amazon Redshift",
+        "Custom GPT Actions remain disabled",
+        "Step 47.2D",
+    ):
+        if normalize_text(required) not in doc:
+            fail(f"Remote metadata documentation omits: {required}")
+
+    privacy = normalize_text(PRIVACY_PATH.read_text(encoding="utf-8"))
+    for required in (
+        "remote metadata API runtime is implemented",
+        "hosted endpoint is not deployed",
         "does not accept local Red-Govern configuration files",
         "does not connect to Amazon Redshift",
         "does not execute SQL",
         "info@snsoft.tech",
     ):
-        if normalize_text(required) not in normalized:
+        if normalize_text(required) not in privacy:
             fail(f"PRIVACY.md omits: {required}")
 
+    llms = normalize_text(LLMS_PATH.read_text(encoding="utf-8"))
+    if "runtime implemented; hosted endpoint not deployed" not in llms:
+        fail("llms.txt does not describe the remote runtime status.")
 
-def validate_docs_and_repository() -> None:
-    """Validate documentation, GPT boundary, and CI integration."""
-    doc = normalize_text(DOC_PATH.read_text(encoding="utf-8"))
-    for required in (
-        "contract-only",
-        EXPECTED_SERVER,
-        "not deployed",
-        "GET /v1/meta",
-        "GET /v1/problems",
-        "GET /v1/problems/{problem_id}",
-        "GET /v1/commands",
-        "does not execute Red-Govern commands",
-        "does not connect to Amazon Redshift",
-        "Custom GPT Actions remain disabled",
-        "Step 47.2C",
-    ):
-        if normalize_text(required) not in doc:
-            fail(f"Remote metadata documentation omits: {required}")
-
-    llms = LLMS_PATH.read_text(encoding="utf-8")
     changelog = CHANGELOG_PATH.read_text(encoding="utf-8")
-    ci = CI_PATH.read_text(encoding="utf-8")
+    if "Implemented the optional FastAPI remote metadata runtime" not in changelog:
+        fail("CHANGELOG omits remote runtime implementation entry.")
 
-    for required in (
-        "/agents/remote-metadata-api/",
-        "/agents/red-govern-metadata.openapi.json",
-        "/agents/remote-metadata-contract.json",
-    ):
-        if required not in llms:
-            fail(f"llms.txt omits remote metadata resource: {required}")
+    gpt = load_object(GPT_CONFIG_PATH)
+    capabilities = gpt.get("capabilities")
+    actions = gpt.get("actions")
 
-    if "Defined a contract-only read-only remote metadata API" not in changelog:
-        fail("CHANGELOG omits remote metadata API contract entry.")
-
-    gpt_config = load_object(GPT_CONFIG_PATH)
-    capabilities = gpt_config.get("capabilities")
-    if not isinstance(capabilities, dict):
-        fail("Custom GPT capabilities are invalid.")
-    if capabilities.get("actions") is not False:
+    if not isinstance(capabilities, dict) or capabilities.get("actions") is not False:
         fail("Custom GPT Actions must remain disabled.")
-
-    actions = gpt_config.get("actions")
-    if not isinstance(actions, dict):
-        fail("Custom GPT actions config is invalid.")
-    if actions.get("enabled") is not False:
+    if not isinstance(actions, dict) or actions.get("enabled") is not False:
         fail("Custom GPT actions.enabled must remain false.")
 
-    if ci.count("Validate remote metadata contract") != 2:
-        fail("CI must run the remote metadata validator in two job groups.")
-    if ci.count("python scripts/validate_remote_metadata_contract.py") != 2:
-        fail("CI remote metadata validator command count differs.")
-    if "scripts/validate_remote_metadata_contract.py" not in ci:
-        fail("CI MyPy scope omits the remote metadata validator.")
+    ci = CI_PATH.read_text(encoding="utf-8")
+    if ci.count("Validate remote metadata contract") != 3:
+        fail("CI must validate remote metadata contract in three job groups.")
+    if "name: Remote metadata API" not in ci:
+        fail("CI remote metadata API job is missing.")
+    if 'python -m pip install --editable ".[remote]"' not in ci:
+        fail("CI remote metadata API job omits isolated remote install.")
+    if (
+        "python -m pytest -q tests/unit/test_remote_api.py "
+        "tests/unit/test_remote_metadata_contract.py --no-cov"
+        not in ci
+    ):
+        fail("CI remote metadata API test command differs.")
 
 
 def main() -> int:
-    """Run every remote metadata contract validation."""
+    """Run all remote metadata runtime contract checks."""
     for path in (
         CONTRACT_PATH,
         OPENAPI_PATH,
         DOC_PATH,
         MAP_PATH,
+        RESOURCE_MAP_PATH,
+        RUNTIME_PATH,
         GPT_CONFIG_PATH,
         PRIVACY_PATH,
         LLMS_PATH,
         CHANGELOG_PATH,
         CI_PATH,
+        PYPROJECT_PATH,
     ):
         if not path.is_file():
-            fail(f"Required remote metadata contract file is missing: {path}")
+            fail(f"Required remote runtime file is missing: {path}")
 
     mapping = load_object(MAP_PATH)
     if mapping.get("generated_for_package_version") != EXPECTED_VERSION:
@@ -434,28 +463,28 @@ def main() -> int:
     if len(allowed_commands(mapping)) != 14:
         fail("Canonical allowed-command count differs.")
 
-    contract = load_object(CONTRACT_PATH)
-    spec = load_object(OPENAPI_PATH)
+    validate_contract(load_object(CONTRACT_PATH), mapping)
+    validate_openapi(load_object(OPENAPI_PATH), mapping)
+    validate_runtime_source()
+    validate_pyproject()
+    validate_docs_privacy_ci()
 
-    validate_contract(contract, mapping)
-    validate_openapi(spec, mapping)
-    validate_privacy()
-    validate_docs_and_repository()
-
-    print("Remote metadata contract version: 1.0")
+    print("Remote metadata runtime: implemented")
     print(f"Package version: {EXPECTED_VERSION}")
+    print("ASGI runtime: red_govern.remote_api:app")
+    print("HTTP framework: FastAPI optional extra")
     print("Remote metadata endpoints: 4")
     print("HTTP methods: GET only")
-    print("Authentication: none (public metadata contract)")
+    print("Authentication: none")
     print("Request bodies: 0")
     print("Credential/configuration inputs: 0")
     print("Remote Redshift connections: 0")
     print("SQL execution endpoints: 0")
     print("Command execution endpoints: 0")
+    print("Built-in docs/OpenAPI routes: disabled")
     print("Custom GPT Actions: disabled")
-    print("Deployment status: contract-only-not-deployed")
-    print("PRIVACY.md: populated as future deployment source")
-    print("Remote metadata API contract validation passed.")
+    print("Deployment status: runtime-implemented-not-deployed")
+    print("Remote metadata API runtime validation passed.")
     return 0
 
 

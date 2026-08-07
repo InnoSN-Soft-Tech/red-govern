@@ -27,14 +27,15 @@ def load(path: Path) -> dict[str, Any]:
     return cast(dict[str, Any], parsed)
 
 
-def test_contract_is_versioned_and_not_deployed() -> None:
+def test_contract_is_versioned_runtime_implemented_and_not_deployed() -> None:
     contract = load(CONTRACT_PATH)
 
     assert contract["schema_version"] == "1.0"
     assert contract["package_version"] == "0.1.0a3"
-    assert contract["deployment_status"] == "contract-only-not-deployed"
+    assert contract["deployment_status"] == "runtime-implemented-not-deployed"
+    assert contract["runtime_module"] == "red_govern.remote_api:app"
     assert contract["current_custom_gpt_actions_enabled"] is False
-    assert contract["next_step"] == "47.2C"
+    assert contract["next_step"] == "47.2D"
 
 
 def test_openapi_surface_is_exactly_four_get_operations() -> None:
@@ -42,6 +43,10 @@ def test_openapi_surface_is_exactly_four_get_operations() -> None:
     paths = cast(dict[str, Any], spec["paths"])
 
     assert spec["openapi"] == "3.1.0"
+    assert spec["x-red-govern-deployment-status"] == (
+        "runtime-implemented-not-deployed"
+    )
+    assert spec["x-red-govern-runtime"] == "red_govern.remote_api:app"
     assert set(paths) == set(EXPECTED_PATHS)
 
     observed: dict[str, str] = {}
@@ -67,7 +72,7 @@ def test_openapi_uses_planned_https_server_and_no_authentication() -> None:
     assert spec["servers"] == [
         {
             "url": "https://api.snsoft.tech/red-govern",
-            "description": "Planned endpoint; not deployed",
+            "description": "Planned endpoint; runtime implemented, not deployed",
         }
     ]
     assert spec["security"] == []
@@ -159,11 +164,12 @@ def test_metadata_example_matches_canonical_counts() -> None:
     assert example["allowed_command_count"] == len(mapping["allowed_commands"])
 
 
-def test_privacy_notice_is_nonempty_and_remote_metadata_specific() -> None:
+def test_privacy_notice_is_nonempty_and_runtime_specific() -> None:
     text = PRIVACY_PATH.read_text(encoding="utf-8")
 
     assert text.strip()
-    assert "remote metadata API contract is not deployed" in text
+    assert "remote metadata API runtime is implemented" in text
+    assert "hosted endpoint is not deployed" in text
     assert "does not connect to Amazon Redshift" in text
     assert "does not execute SQL" in text
     assert "does not accept local Red-Govern configuration files" in text

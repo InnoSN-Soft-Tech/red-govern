@@ -86,10 +86,17 @@ agents = [
     "openai-agents>=0.19.4,<0.20",
 ]
 
+remote = [
+    "fastapi>=0.139,<1",
+    "uvicorn>=0.51,<1",
+]
+
 all = [
     "openpyxl>=3.1,<4",
     "boto3>=1.34,<2",
     "jinja2>=3.1,<4",
+    "fastapi>=0.139,<1",
+    "uvicorn>=0.51,<1",
     "mcp>=2.0,<3",
 ]
 
@@ -104,6 +111,9 @@ dev = [
     "types-PyYAML>=6,<7",
     "types-openpyxl>=3.1.5,<4",
     "tomli>=2,<3; python_version < '3.11'",
+    "fastapi>=0.139,<1",
+    "uvicorn>=0.51,<1",
+    "httpx>=0.28,<1",
     "mcp>=2.0,<3",
 ]
 
@@ -127,6 +137,7 @@ packages = ["src/red_govern"]
 include = [
     "src/red_govern/**/*.py",
     "src/red_govern/**/*.yml",
+    "src/red_govern/**/*.json",
     "src/red_govern/py.typed",
 ]
 

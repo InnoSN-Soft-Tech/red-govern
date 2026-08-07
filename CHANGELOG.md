@@ -10,6 +10,7 @@ alpha, functionality and interfaces may change between releases.
 
 ### API
 
+- Implemented the optional FastAPI remote metadata runtime for the four frozen GET operations without Redshift connectivity, SQL or command execution, credential intake, or local-configuration upload.
 - Defined a contract-only read-only remote metadata API with four GET operations and an OpenAPI 3.1 schema; no server, Redshift connection, SQL execution, or Custom GPT Action was enabled.
 - Added an optional OpenAI Agents SDK adapter exposing the four offline-safe typed API operations as strict function tools without model execution.
 - Added an optional local stdio MCP adapter exposing four structured, offline-safe configuration and privacy tools over the typed Python API.
@@ -47,6 +48,7 @@ alpha, functionality and interfaces may change between releases.
 
 ### Validation
 
+- Added remote-runtime route, payload, packaged-map parity, network-isolation, dependency-boundary, and isolated CI tests.
 - Added deterministic remote metadata contract tests and CI validation across the quality and Python 3.10–3.13 job groups.
 - Added isolated OpenAI Agents SDK CI and 11 adapter contract tests while preserving the MCP 2.x validation environment.
 - Added in-memory MCP protocol tests and deterministic validation for the exact tool set, structured outputs, sanitized errors, stdio-only transport, and dependency boundary.

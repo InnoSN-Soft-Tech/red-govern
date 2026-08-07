@@ -337,7 +337,7 @@
     "url": "https://innosn-soft-tech.github.io/red-govern/agents/remote-metadata-api/"
   },
   "info": {
-    "description": "Contract-only, read-only public metadata API for Red-Govern. This schema is versioned but the server is not deployed in Step 47.2B.",
+    "description": "Read-only public metadata API for Red-Govern. The runtime is implemented in Step 47.2C but the planned hosted endpoint is not deployed.",
     "title": "Red-Govern Remote Metadata API",
     "version": "0.1.0a3"
   },
@@ -477,7 +477,7 @@
   "security": [],
   "servers": [
     {
-      "description": "Planned endpoint; not deployed",
+      "description": "Planned endpoint; runtime implemented, not deployed",
       "url": "https://api.snsoft.tech/red-govern"
     }
   ],
@@ -487,5 +487,6 @@
       "name": "Metadata"
     }
   ],
-  "x-red-govern-deployment-status": "contract-only-not-deployed"
+  "x-red-govern-deployment-status": "runtime-implemented-not-deployed",
+  "x-red-govern-runtime": "red_govern.remote_api:app"
 }

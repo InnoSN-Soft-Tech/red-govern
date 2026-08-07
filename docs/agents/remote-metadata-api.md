@@ -1,21 +1,22 @@
-# Remote metadata API contract
+# Remote metadata API
 
-Red-Govern `0.1.0a3` now defines a **contract-only** read-only remote metadata
-API intended for future Custom GPT Actions and other HTTP clients. Step 47.2B
-defines the interface and OpenAPI schema only. The planned server is **not deployed**.
-
-Planned server:
+Red-Govern `0.1.0a3` includes an optional **read-only remote metadata API
+runtime** implementing the frozen Step 47.2B contract. The runtime is implemented
+in source as:
 
 ```text
-https://api.snsoft.tech/red-govern
+red_govern.remote_api:app
 ```
 
-The contract is published in:
+The hosted endpoint at `https://api.snsoft.tech/red-govern` is **not deployed**
+in Step 47.2C, and Custom GPT Actions remain disabled.
+
+The tracked Action-facing contracts remain:
 
 - [`remote-metadata-contract.json`](remote-metadata-contract.json)
 - [`red-govern-metadata.openapi.json`](red-govern-metadata.openapi.json)
 
-The OpenAPI document uses OpenAPI 3.1.0 and four GET-only operations:
+The runtime implements exactly four GET operations:
 
 | Operation | Purpose |
 |---|---|
@@ -25,41 +26,58 @@ The OpenAPI document uses OpenAPI 3.1.0 and four GET-only operations:
 | `GET /v1/commands` | Return the canonical command allowlist as metadata |
 
 The command endpoint **does not execute Red-Govern commands**. It only returns
-the version-matched allowlist from the canonical problem map.
+the version-matched allowlist from a packaged copy of the canonical problem map.
+That packaged map is validated byte-for-byte against
+`docs/problems/problem-command-map.json`.
 
-## Why the local 47.1 tools are not remote-wrapped
+## Source installation
 
-Three local typed operations depend wholly or partly on a file that exists on
-the machine running Red-Govern:
+Step 47.2C does not publish a new PyPI release. To test the optional runtime from
+this source snapshot, use a separate or development environment:
+
+```bash
+python -m pip install --editable ".[remote]"
+```
+
+Start a local validation server bound only to loopback:
+
+```bash
+python -m uvicorn red_govern.remote_api:app \
+  --host 127.0.0.1 \
+  --port 8000
+```
+
+The FastAPI documentation, ReDoc, and generated OpenAPI routes are disabled in
+the runtime. The version-controlled OpenAPI document above remains the
+Action-facing schema.
+
+## Runtime boundaries
+
+The runtime accepts no request body and no authentication secret. Its only
+request selectors are:
+
+- optional `status` on `GET /v1/problems`;
+- canonical `problem_id` on `GET /v1/problems/{problem_id}`.
+
+It does not accept passwords, tokens, credentials, private endpoints,
+connection strings, local Red-Govern configuration files, SQL, arbitrary
+commands, or unredacted production outputs.
+
+The runtime does not connect to Amazon Redshift, execute SQL, execute
+Red-Govern commands, write files, perform destructive remediation, or prove
+that an object is safe to delete.
+
+The local configuration operations from Step 47.1 remain local and are **not**
+remote-wrapped:
 
 - `validate_config(path)`
 - `get_redacted_config(path=<local file>)`
 - `run_privacy_audit(path)`
 
-A hosted service cannot read a caller's local path. Step 47.2B therefore does
-not accept uploaded configuration, credentials, private endpoints, connection
-strings, or unredacted production output to imitate those local semantics.
-
-The remote metadata contract does not connect to Amazon Redshift, execute SQL,
-write files, run arbitrary commands, perform destructive remediation, or prove
-that an object is safe to delete.
-
-## Authentication and privacy
-
-The proposed metadata is already public in versioned Red-Govern documentation,
-so the contract uses no authentication. That is a contract decision, not a
-statement that a server is currently available.
-
-`PRIVACY.md` is the source privacy notice for this future public metadata
-surface. A deployed Action still needs a reachable API and a valid privacy
-policy URL before public GPT sharing.
-
 ## Custom GPT status
 
-**Custom GPT Actions remain disabled** in Step 47.2B. Do not paste this schema
-into a production GPT Action until the planned server and privacy-policy URL are
-actually live and the runtime passes its own integration validation.
+**Custom GPT Actions remain disabled.** Do not configure the planned Action
+until the hosted endpoint and public privacy-policy URL are actually deployed
+and pass separate external integration validation.
 
-The next implementation phase is **Step 47.2C**: build the remote metadata API
-runtime against this frozen contract without adding Redshift connectivity,
-credential intake, SQL execution, or local-configuration upload.
+The next phase is **Step 47.2D — remote metadata API deployment readiness**.

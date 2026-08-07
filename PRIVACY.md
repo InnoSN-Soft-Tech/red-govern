@@ -11,14 +11,15 @@ external services are disabled by default in the starter configuration. Users
 remain responsible for handling generated operational metadata according to
 their organisation's policies.
 
-## Remote metadata contract
+## Remote metadata runtime
 
-The Step 47.2B remote metadata API contract is not deployed. It defines a future
-read-only HTTP surface for public, versioned package metadata such as the
-Red-Govern version, problem taxonomy, support status, canonical command
-allowlist, documentation links, and safety boundaries.
+The Step 47.2C remote metadata API runtime is implemented in the source tree,
+but the hosted endpoint is not deployed. It exposes only public, versioned
+package metadata such as the Red-Govern version, problem taxonomy, support
+status, canonical command allowlist, documentation links, and safety
+boundaries.
 
-That future public metadata surface:
+The remote metadata runtime:
 
 - does not accept passwords, tokens, credentials, private endpoints, connection
   strings, or unredacted production outputs;
@@ -29,10 +30,13 @@ That future public metadata surface:
 - does not provide destructive remediation or prove that an object is safe to
   delete.
 
-The planned metadata contract uses only information already published in the
-Red-Govern repository and documentation. No Action endpoint is live in Step
-47.2B, and Custom GPT Actions remain disabled until a deployed runtime and
-public privacy-policy URL pass separate validation.
+The implementation reads a packaged copy of public canonical metadata. The
+runtime has no Redshift connection path and no local-configuration upload
+surface.
+
+No public Action endpoint is live in Step 47.2C, and Custom GPT Actions remain
+disabled until a hosted runtime and public privacy-policy URL pass separate
+external validation.
 
 ## Operational data
 

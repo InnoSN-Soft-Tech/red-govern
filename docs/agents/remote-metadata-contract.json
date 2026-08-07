@@ -5,7 +5,7 @@
   "authentication": "none",
   "contract_name": "red-govern-remote-metadata",
   "current_custom_gpt_actions_enabled": false,
-  "deployment_status": "contract-only-not-deployed",
+  "deployment_status": "runtime-implemented-not-deployed",
   "documentation": "https://innosn-soft-tech.github.io/red-govern/agents/remote-metadata-api/",
   "endpoints": [
     {
@@ -62,8 +62,8 @@
     "SQL",
     "arbitrary commands"
   ],
-  "next_step": "47.2C",
-  "next_step_name": "Remote metadata API runtime",
+  "next_step": "47.2D",
+  "next_step_name": "Remote metadata API deployment readiness",
   "openapi_path": "docs/agents/red-govern-metadata.openapi.json",
   "package_version": "0.1.0a3",
   "planned_server_url": "https://api.snsoft.tech/red-govern",
@@ -71,6 +71,7 @@
   "privacy_policy_url": null,
   "problem_count": 21,
   "remote_redshift_runtime": false,
+  "runtime_module": "red_govern.remote_api:app",
   "schema_version": "1.0",
   "status_counts": {
     "conditional": 4,
