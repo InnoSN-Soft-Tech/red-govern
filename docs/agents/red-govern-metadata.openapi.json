@@ -1,0 +1,491 @@
+{
+  "components": {
+    "schemas": {
+      "CommandListResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "commands": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "count": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "package_version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "package_version",
+          "count",
+          "commands"
+        ],
+        "type": "object"
+      },
+      "ErrorResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "const": "not_found",
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error",
+          "message"
+        ],
+        "type": "object"
+      },
+      "MetadataResponse": {
+        "additionalProperties": false,
+        "example": {
+          "allowed_command_count": 14,
+          "documentation": "https://innosn-soft-tech.github.io/red-govern/",
+          "package": "red-govern",
+          "package_version": "0.1.0a3",
+          "platform": "Amazon Redshift",
+          "problem_count": 21,
+          "project_status": "alpha",
+          "pypi": "https://pypi.org/project/red-govern/",
+          "repository": "https://github.com/InnoSN-Soft-Tech/red-govern",
+          "safety": {
+            "accepts_credentials": false,
+            "accepts_local_configuration": false,
+            "destructive_remediation": false,
+            "executes_commands": false,
+            "executes_sql": false,
+            "remote_redshift_runtime": false,
+            "safe_to_delete_proof": false
+          },
+          "status_counts": {
+            "conditional": 4,
+            "supported": 12,
+            "unsupported": 5
+          }
+        },
+        "properties": {
+          "allowed_command_count": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "documentation": {
+            "format": "uri",
+            "type": "string"
+          },
+          "package": {
+            "const": "red-govern",
+            "type": "string"
+          },
+          "package_version": {
+            "type": "string"
+          },
+          "platform": {
+            "const": "Amazon Redshift",
+            "type": "string"
+          },
+          "problem_count": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "project_status": {
+            "const": "alpha",
+            "type": "string"
+          },
+          "pypi": {
+            "format": "uri",
+            "type": "string"
+          },
+          "repository": {
+            "format": "uri",
+            "type": "string"
+          },
+          "safety": {
+            "$ref": "#/components/schemas/SafetyBoundaries"
+          },
+          "status_counts": {
+            "$ref": "#/components/schemas/StatusCounts"
+          }
+        },
+        "required": [
+          "package",
+          "package_version",
+          "platform",
+          "project_status",
+          "documentation",
+          "repository",
+          "pypi",
+          "problem_count",
+          "status_counts",
+          "allowed_command_count",
+          "safety"
+        ],
+        "type": "object"
+      },
+      "ProblemDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "agent_guidance": {
+            "type": "string"
+          },
+          "caveats": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "commands": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          },
+          "manual_alternative": {
+            "type": "string"
+          },
+          "outputs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "prerequisites": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ProblemStatus"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "user_intents": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "workflow": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "status",
+          "summary",
+          "user_intents",
+          "commands",
+          "workflow",
+          "prerequisites",
+          "outputs",
+          "caveats",
+          "agent_guidance",
+          "manual_alternative"
+        ],
+        "type": "object"
+      },
+      "ProblemListResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "package_version": {
+            "type": "string"
+          },
+          "problems": {
+            "items": {
+              "$ref": "#/components/schemas/ProblemSummary"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "package_version",
+          "count",
+          "problems"
+        ],
+        "type": "object"
+      },
+      "ProblemStatus": {
+        "enum": [
+          "supported",
+          "conditional",
+          "unsupported"
+        ],
+        "type": "string"
+      },
+      "ProblemSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "commands": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ProblemStatus"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "status",
+          "summary",
+          "commands"
+        ],
+        "type": "object"
+      },
+      "SafetyBoundaries": {
+        "additionalProperties": false,
+        "properties": {
+          "accepts_credentials": {
+            "const": false,
+            "type": "boolean"
+          },
+          "accepts_local_configuration": {
+            "const": false,
+            "type": "boolean"
+          },
+          "destructive_remediation": {
+            "const": false,
+            "type": "boolean"
+          },
+          "executes_commands": {
+            "const": false,
+            "type": "boolean"
+          },
+          "executes_sql": {
+            "const": false,
+            "type": "boolean"
+          },
+          "remote_redshift_runtime": {
+            "const": false,
+            "type": "boolean"
+          },
+          "safe_to_delete_proof": {
+            "const": false,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "accepts_credentials",
+          "accepts_local_configuration",
+          "remote_redshift_runtime",
+          "executes_sql",
+          "executes_commands",
+          "destructive_remediation",
+          "safe_to_delete_proof"
+        ],
+        "type": "object"
+      },
+      "StatusCounts": {
+        "additionalProperties": false,
+        "properties": {
+          "conditional": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "supported": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "unsupported": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "supported",
+          "conditional",
+          "unsupported"
+        ],
+        "type": "object"
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Red-Govern remote metadata API contract",
+    "url": "https://innosn-soft-tech.github.io/red-govern/agents/remote-metadata-api/"
+  },
+  "info": {
+    "description": "Contract-only, read-only public metadata API for Red-Govern. This schema is versioned but the server is not deployed in Step 47.2B.",
+    "title": "Red-Govern Remote Metadata API",
+    "version": "0.1.0a3"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/v1/commands": {
+      "get": {
+        "description": "Return the canonical command allowlist as public metadata. This endpoint never executes a command.",
+        "operationId": "listRedGovernCommands",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandListResponse"
+                }
+              }
+            },
+            "description": "Version-matched canonical command allowlist."
+          }
+        },
+        "security": [],
+        "summary": "List canonical Red-Govern commands",
+        "tags": [
+          "Metadata"
+        ]
+      }
+    },
+    "/v1/meta": {
+      "get": {
+        "description": "Return package version, platform, capability counts, public links, and safety boundaries. This action does not connect to Amazon Redshift.",
+        "operationId": "getRedGovernMetadata",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetadataResponse"
+                }
+              }
+            },
+            "description": "Versioned public metadata."
+          }
+        },
+        "security": [],
+        "summary": "Get Red-Govern metadata",
+        "tags": [
+          "Metadata"
+        ]
+      }
+    },
+    "/v1/problems": {
+      "get": {
+        "description": "List canonical problem summaries. Optionally filter by support status. The endpoint returns guidance metadata and does not execute commands.",
+        "operationId": "listRedGovernProblems",
+        "parameters": [
+          {
+            "description": "Optional support-status filter.",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "enum": [
+                "supported",
+                "conditional",
+                "unsupported"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemListResponse"
+                }
+              }
+            },
+            "description": "Version-matched problem summaries."
+          }
+        },
+        "security": [],
+        "summary": "List Red-Govern problem contracts",
+        "tags": [
+          "Metadata"
+        ]
+      }
+    },
+    "/v1/problems/{problem_id}": {
+      "get": {
+        "description": "Return one canonical problem contract by versioned problem id.",
+        "operationId": "getRedGovernProblem",
+        "parameters": [
+          {
+            "description": "Canonical kebab-case problem id.",
+            "in": "path",
+            "name": "problem_id",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "One canonical problem contract."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Problem id not found."
+          }
+        },
+        "security": [],
+        "summary": "Get one Red-Govern problem contract",
+        "tags": [
+          "Metadata"
+        ]
+      }
+    }
+  },
+  "security": [],
+  "servers": [
+    {
+      "description": "Planned endpoint; not deployed",
+      "url": "https://api.snsoft.tech/red-govern"
+    }
+  ],
+  "tags": [
+    {
+      "description": "Versioned public Red-Govern metadata only.",
+      "name": "Metadata"
+    }
+  ],
+  "x-red-govern-deployment-status": "contract-only-not-deployed"
+}

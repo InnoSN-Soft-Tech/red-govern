@@ -1,0 +1,80 @@
+{
+  "accepts_credentials": false,
+  "accepts_local_configuration": false,
+  "allowed_command_count": 14,
+  "authentication": "none",
+  "contract_name": "red-govern-remote-metadata",
+  "current_custom_gpt_actions_enabled": false,
+  "deployment_status": "contract-only-not-deployed",
+  "documentation": "https://innosn-soft-tech.github.io/red-govern/agents/remote-metadata-api/",
+  "endpoints": [
+    {
+      "method": "GET",
+      "operation_id": "getRedGovernMetadata",
+      "path": "/v1/meta",
+      "purpose": "Return versioned public package metadata, capability counts, documentation links, and safety boundaries.",
+      "source": [
+        "package version",
+        "problem-command-map.json"
+      ]
+    },
+    {
+      "method": "GET",
+      "operation_id": "listRedGovernProblems",
+      "path": "/v1/problems",
+      "purpose": "List public problem summaries, optionally filtered by support status.",
+      "source": [
+        "problem-command-map.json"
+      ]
+    },
+    {
+      "method": "GET",
+      "operation_id": "getRedGovernProblem",
+      "path": "/v1/problems/{problem_id}",
+      "purpose": "Return one version-matched public problem contract by canonical problem id.",
+      "source": [
+        "problem-command-map.json"
+      ]
+    },
+    {
+      "method": "GET",
+      "operation_id": "listRedGovernCommands",
+      "path": "/v1/commands",
+      "purpose": "Return the canonical command allowlist as metadata only; commands are not executed.",
+      "source": [
+        "problem-command-map.json"
+      ]
+    }
+  ],
+  "excluded_local_operations": [
+    "validate_config(path)",
+    "get_redacted_config(path=<local file>)",
+    "run_privacy_audit(path)"
+  ],
+  "forbidden_inputs": [
+    "passwords",
+    "tokens",
+    "credentials",
+    "private endpoints",
+    "connection strings",
+    "local configuration files",
+    "unredacted production outputs",
+    "SQL",
+    "arbitrary commands"
+  ],
+  "next_step": "47.2C",
+  "next_step_name": "Remote metadata API runtime",
+  "openapi_path": "docs/agents/red-govern-metadata.openapi.json",
+  "package_version": "0.1.0a3",
+  "planned_server_url": "https://api.snsoft.tech/red-govern",
+  "privacy_policy_source": "PRIVACY.md",
+  "privacy_policy_url": null,
+  "problem_count": 21,
+  "remote_redshift_runtime": false,
+  "schema_version": "1.0",
+  "status_counts": {
+    "conditional": 4,
+    "supported": 12,
+    "unsupported": 5
+  }
+}

@@ -65,7 +65,8 @@ jobs:
             scripts/validate_agent_assets.py \
             scripts/evaluate_agent_skill.py \
             scripts/build_agent_skill_distribution.py \
-            scripts/validate_custom_gpt_assets.py
+            scripts/validate_custom_gpt_assets.py \
+            scripts/validate_remote_metadata_contract.py
 
       - name: Validate problem taxonomy
         run: python scripts/validate_problem_taxonomy.py
@@ -78,6 +79,9 @@ jobs:
 
       - name: Validate Custom GPT assets
         run: python scripts/validate_custom_gpt_assets.py
+
+      - name: Validate remote metadata contract
+        run: python scripts/validate_remote_metadata_contract.py
 
       - name: Evaluate agent Skill contract
         run: python scripts/evaluate_agent_skill.py
@@ -139,6 +143,9 @@ jobs:
 
       - name: Validate Custom GPT assets
         run: python scripts/validate_custom_gpt_assets.py
+
+      - name: Validate remote metadata contract
+        run: python scripts/validate_remote_metadata_contract.py
 
       - name: Evaluate agent Skill contract
         run: python scripts/evaluate_agent_skill.py

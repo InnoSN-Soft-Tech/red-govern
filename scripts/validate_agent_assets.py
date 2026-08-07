@@ -77,6 +77,7 @@ AGENT_DOC_PATHS = [
     ROOT / "docs" / "agents" / "api.md",
     ROOT / "docs" / "agents" / "mcp.md",
     ROOT / "docs" / "agents" / "openai-agents.md",
+    ROOT / "docs" / "agents" / "remote-metadata-api.md",
     ROOT / "docs" / "agents" / "evaluations.md",
 ]
 
@@ -945,7 +946,7 @@ def main() -> int:
     print("Claude project Skill files: 5")
     print("Repository instruction files: 4")
     print("Evaluation cases: 28")
-    print("Agent documentation files: 6")
+    print("Agent documentation files: 7")
     print("Local stdio MCP tools: 4")
     print("OpenAI Agents SDK tools: 4")
     print("Typed Python API functions: 4")

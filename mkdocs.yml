@@ -47,6 +47,7 @@ nav:
       - Python API: agents/api.md
       - Local stdio MCP: agents/mcp.md
       - OpenAI Agents SDK: agents/openai-agents.md
+      - Remote metadata API: agents/remote-metadata-api.md
       - Evaluations and distribution: agents/evaluations.md
   - Redshift:
       - Compatibility: compatibility.md

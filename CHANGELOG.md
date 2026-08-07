@@ -10,6 +10,7 @@ alpha, functionality and interfaces may change between releases.
 
 ### API
 
+- Defined a contract-only read-only remote metadata API with four GET operations and an OpenAPI 3.1 schema; no server, Redshift connection, SQL execution, or Custom GPT Action was enabled.
 - Added an optional OpenAI Agents SDK adapter exposing the four offline-safe typed API operations as strict function tools without model execution.
 - Added an optional local stdio MCP adapter exposing four structured, offline-safe configuration and privacy tools over the typed Python API.
 - Kept MCP outside the base dependency set and limited the first adapter to local stdio with no Redshift connection, SQL execution, file-writing tool, hosted transport, or OpenAI API key.
@@ -21,6 +22,7 @@ alpha, functionality and interfaces may change between releases.
 
 ### Documentation
 
+- Added the remote metadata API contract, OpenAPI schema, planned server boundary, and a populated privacy notice for future public Action readiness.
 - Added OpenAI Agents SDK adapter construction, isolated-installation, tool, and safety-boundary documentation.
 - Added local stdio MCP installation, client-configuration, tool, and safety-boundary documentation.
 - Added a concise `llms.txt` documentation index with canonical capability,
@@ -45,6 +47,7 @@ alpha, functionality and interfaces may change between releases.
 
 ### Validation
 
+- Added deterministic remote metadata contract tests and CI validation across the quality and Python 3.10–3.13 job groups.
 - Added isolated OpenAI Agents SDK CI and 11 adapter contract tests while preserving the MCP 2.x validation environment.
 - Added in-memory MCP protocol tests and deterministic validation for the exact tool set, structured outputs, sanitized errors, stdio-only transport, and dependency boundary.
 - Added discoverability-asset validation to the quality job and Python

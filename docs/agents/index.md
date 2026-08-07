@@ -17,6 +17,7 @@ supported, conditional, and unsupported Amazon Redshift governance workflows.
 - An optional [local stdio MCP adapter](mcp.md) exposing four offline-safe,
   structured configuration and privacy tools.
 - An optional [OpenAI Agents SDK adapter](openai-agents.md) exposing the same four offline-safe operations as strict local function tools without model execution.
+- A [remote metadata API contract](remote-metadata-api.md) defining four GET-only public metadata operations for future Actions and HTTP clients; the planned server is not deployed and Custom GPT Actions remain disabled.
 
 All capability claims derive from the canonical problem map. Platform adapters
 must remain thin and must not invent commands or redefine capability status.

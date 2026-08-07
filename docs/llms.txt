@@ -32,6 +32,9 @@ passwords, tokens, private endpoints, or unredacted production reports.
 - [AI-agent resources](https://innosn-soft-tech.github.io/red-govern/agents/): Portable Skill, repository adapters, distribution, and evaluation overview.
 - [Skill installation](https://innosn-soft-tech.github.io/red-govern/agents/installation/): Version matching, archive verification, installation, and security guidance.
 - [Evaluations and distribution](https://innosn-soft-tech.github.io/red-govern/agents/evaluations/): Deterministic contract fixtures and reproducible archive policy.
+- [Remote metadata API contract](https://innosn-soft-tech.github.io/red-govern/agents/remote-metadata-api/): Contract-only GET surface for versioned public metadata; not deployed.
+- [Remote metadata contract JSON](https://innosn-soft-tech.github.io/red-govern/agents/remote-metadata-contract.json): Machine-readable endpoint and safety contract.
+- [OpenAPI metadata schema](https://innosn-soft-tech.github.io/red-govern/agents/red-govern-metadata.openapi.json): OpenAPI 3.1 contract for future Actions and HTTP clients.
 - [Skill archive](https://github.com/InnoSN-Soft-Tech/red-govern/raw/main/agent-skills/dist/red-govern-0.1.0a3.zip): Versioned downloadable agent Skill bundle.
 - [Skill archive manifest](https://github.com/InnoSN-Soft-Tech/red-govern/blob/main/agent-skills/dist/manifest.json): Archive digest, contents, deterministic policy, and legal-file list.
 
