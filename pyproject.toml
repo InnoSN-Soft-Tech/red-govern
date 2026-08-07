@@ -82,6 +82,10 @@ mcp = [
     "mcp>=2.0,<3",
 ]
 
+agents = [
+    "openai-agents>=0.19.4,<0.20",
+]
+
 all = [
     "openpyxl>=3.1,<4",
     "boto3>=1.34,<2",
@@ -200,6 +204,16 @@ packages = ["red_govern"]
 mypy_path = "src"
 warn_unreachable = true
 show_error_codes = true
+
+[[tool.mypy.overrides]]
+module = "red_govern.openai_agents"
+disallow_untyped_decorators = false
+warn_return_any = false
+
+
+[[tool.mypy.overrides]]
+module = "agents"
+ignore_missing_imports = true
 
 [tool.red_govern]
 default_config = "src/red_govern/resources/default_config.yml"

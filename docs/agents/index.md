@@ -16,6 +16,7 @@ supported, conditional, and unsupported Amazon Redshift governance workflows.
   safety, privacy, scope, and version boundaries.
 - An optional [local stdio MCP adapter](mcp.md) exposing four offline-safe,
   structured configuration and privacy tools.
+- An optional [OpenAI Agents SDK adapter](openai-agents.md) exposing the same four offline-safe operations as strict local function tools without model execution.
 
 All capability claims derive from the canonical problem map. Platform adapters
 must remain thin and must not invent commands or redefine capability status.
@@ -26,8 +27,11 @@ Publishing these files improves interoperability and discoverability. It does
 not automatically install Red-Govern in every agent, force model indexing,
 guarantee search ranking, or provide unrestricted command execution.
 
+The OpenAI Agents adapter also does not execute a model on construction.
+
 The local MCP adapter does not connect to Amazon Redshift, execute SQL, write
-files, open a network port, or provide a hosted service. Red-Govern does not
+files, open a network port, or provide a hosted service. The OpenAI Agents
+adapter also does not execute a model on construction. Red-Govern does not
 perform destructive remediation and does not prove that an object is safe to
 delete. Never provide credentials or unredacted production outputs to an AI
 agent.

@@ -16,6 +16,7 @@ REFERENCE_ROOT = PORTABLE_ROOT / "references"
 CLAUDE_ROOT = ROOT / ".claude" / "skills" / "red-govern"
 API_PATH = ROOT / "src" / "red_govern" / "api.py"
 MCP_PATH = ROOT / "src" / "red_govern" / "mcp_server.py"
+OPENAI_AGENTS_PATH = ROOT / "src" / "red_govern" / "openai_agents.py"
 
 EVALUATION_PATH = (
     ROOT / "agent-skills" / "evals" / "red-govern-cases.json"
@@ -75,6 +76,7 @@ AGENT_DOC_PATHS = [
     ROOT / "docs" / "agents" / "installation.md",
     ROOT / "docs" / "agents" / "api.md",
     ROOT / "docs" / "agents" / "mcp.md",
+    ROOT / "docs" / "agents" / "openai-agents.md",
     ROOT / "docs" / "agents" / "evaluations.md",
 ]
 
@@ -666,6 +668,143 @@ def validate_local_mcp_contract() -> None:
             fail(f"Local stdio MCP documentation omits: {required}")
 
 
+
+def validate_openai_agents_contract() -> None:
+    """Validate the optional OpenAI Agents SDK adapter and documentation."""
+    if not OPENAI_AGENTS_PATH.is_file():
+        fail(f"OpenAI Agents adapter is missing: {OPENAI_AGENTS_PATH}")
+
+    text = OPENAI_AGENTS_PATH.read_text(encoding="utf-8")
+    normalized_source = normalize_text(text)
+    tree = ast.parse(text)
+    tool_names: set[str] = set()
+    public_functions: set[str] = set()
+
+    for node in tree.body:
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+
+        if not node.name.startswith("_"):
+            public_functions.add(node.name)
+
+        for decorator in node.decorator_list:
+            if not isinstance(decorator, ast.Call):
+                continue
+
+            function = decorator.func
+            if not (isinstance(function, ast.Name) and function.id == "function_tool"):
+                continue
+
+            for keyword in decorator.keywords:
+                if keyword.arg != "name_override":
+                    continue
+                value = keyword.value
+                if isinstance(value, ast.Constant) and isinstance(value.value, str):
+                    tool_names.add(value.value)
+
+    expected_tools = {
+        "red_govern_get_redacted_config",
+        "red_govern_get_version",
+        "red_govern_run_privacy_audit",
+        "red_govern_validate_config",
+    }
+    if tool_names != expected_tools:
+        fail(
+            "OpenAI Agents tool set differs. "
+            f"Expected {sorted(expected_tools)}, got {sorted(tool_names)}."
+        )
+
+    expected_functions = expected_tools | {
+        "build_red_govern_agent",
+        "get_openai_agent_tools",
+    }
+    if public_functions != expected_functions:
+        fail("OpenAI Agents public function set differs.")
+
+    imports: set[str] = set()
+    for imported_node in ast.walk(tree):
+        if isinstance(imported_node, ast.Import):
+            imports.update(
+                alias.name.split(".", 1)[0] for alias in imported_node.names
+            )
+        elif isinstance(imported_node, ast.ImportFrom) and imported_node.module:
+            imports.add(imported_node.module.split(".", 1)[0])
+
+    if "agents" not in imports or "red_govern" not in imports:
+        fail("OpenAI Agents adapter must import the SDK and typed Red-Govern API.")
+
+    forbidden_imports = {
+        "fastapi",
+        "mcp",
+        "openai",
+        "redshift_connector",
+        "rich",
+        "typer",
+        "uvicorn",
+    }
+    unexpected_imports = imports & forbidden_imports
+    if unexpected_imports:
+        fail(
+            "OpenAI Agents adapter imports forbidden runtime surfaces: "
+            f"{sorted(unexpected_imports)}"
+        )
+
+    for required in (
+        "does not run a model",
+        "does not connect to Amazon Redshift",
+        "execute SQL",
+        "write files",
+        "safe to delete",
+        "destructive remediation",
+        "Never request passwords",
+    ):
+        if normalize_text(required) not in normalized_source:
+            fail(f"OpenAI Agents adapter omits contract text: {required}")
+
+    for forbidden in (
+        "Runner",
+        "AsyncOpenAI",
+        "HostedMCPTool",
+        "WebSearchTool",
+        "FileSearchTool",
+        "ComputerTool",
+        "ShellTool",
+        "MCPServer",
+    ):
+        if forbidden in text:
+            fail(f"OpenAI Agents adapter includes forbidden runtime surface: {forbidden}")
+
+    agents_doc_path = ROOT / "docs" / "agents" / "openai-agents.md"
+    if not agents_doc_path.is_file():
+        fail(f"OpenAI Agents documentation is missing: {agents_doc_path}")
+
+    agents_doc = normalize_text(agents_doc_path.read_text(encoding="utf-8"))
+    for required in (
+        "openai-agents>=0.19.4,<0.20",
+        "separate-environment integrations",
+        'python -m pip install --editable ".[agents]"',
+        "build_red_govern_agent",
+        "red_govern_get_version",
+        "red_govern_validate_config",
+        "red_govern_get_redacted_config",
+        "red_govern_run_privacy_audit",
+        "does not connect to Amazon Redshift",
+        "does not prove that a table or other object is safe to delete",
+        "does not perform destructive remediation",
+        "does not call the Agents SDK `Runner`",
+    ):
+        if normalize_text(required) not in agents_doc:
+            fail(f"OpenAI Agents documentation omits: {required}")
+
+    pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    if 'agents = [\n    "openai-agents>=0.19.4,<0.20",\n]' not in pyproject:
+        fail("OpenAI Agents optional dependency is missing or differs.")
+
+    all_block = pyproject.split("all = [", 1)[1].split("]", 1)[0]
+    dev_block = pyproject.split("dev = [", 1)[1].split("]", 1)[0]
+    if "openai-agents" in all_block or "openai-agents" in dev_block:
+        fail("OpenAI Agents must remain isolated from all/dev while MCP ranges conflict.")
+
 def validate_evaluation_and_docs() -> None:
     """Validate evaluation metadata, installation docs, and legal text."""
     suite = load_json_object(EVALUATION_PATH)
@@ -711,6 +850,7 @@ for required in (
     "does not prove that an object is safe to delete",
     "does not perform destructive remediation",
     "Local stdio MCP reuses this typed API",
+    "OpenAI Agents SDK adapter also reuses this typed API",
 ):
     if normalize_text(required) not in api_doc:
         fail(f"Typed Python API documentation omits: {required}")
@@ -788,6 +928,7 @@ def main() -> int:
     validate_repository_instructions()
     validate_internal_api_contract()
     validate_local_mcp_contract()
+    validate_openai_agents_contract()
     validate_evaluation_and_docs()
     validate_distribution_metadata()
 
@@ -804,8 +945,9 @@ def main() -> int:
     print("Claude project Skill files: 5")
     print("Repository instruction files: 4")
     print("Evaluation cases: 28")
-    print("Agent documentation files: 5")
+    print("Agent documentation files: 6")
     print("Local stdio MCP tools: 4")
+    print("OpenAI Agents SDK tools: 4")
     print("Typed Python API functions: 4")
     print("Distribution legal files: 4")
     print("Cross-agent drift: none")

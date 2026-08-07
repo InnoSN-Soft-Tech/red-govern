@@ -46,6 +46,7 @@ nav:
       - Installation: agents/installation.md
       - Python API: agents/api.md
       - Local stdio MCP: agents/mcp.md
+      - OpenAI Agents SDK: agents/openai-agents.md
       - Evaluations and distribution: agents/evaluations.md
   - Redshift:
       - Compatibility: compatibility.md

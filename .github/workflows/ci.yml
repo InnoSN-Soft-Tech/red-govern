@@ -149,6 +149,46 @@ jobs:
       - name: Run compatibility tests
         run: python -m pytest -q --no-cov
 
+  openai-agents:
+    name: OpenAI Agents SDK adapter
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version-file: .python-version
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Upgrade packaging tools
+        run: python -m pip install --upgrade pip
+
+      - name: Install isolated Agents adapter dependencies
+        run: |
+          python -m pip install --editable ".[agents]"
+          python -m pip install             "pytest>=8,<10" "pytest-cov>=5,<8"             "mypy>=1.13,<3"             "types-PyYAML>=6,<7"             "types-openpyxl>=3.1.5,<4"
+
+      - name: Verify isolated dependency set
+        run: python -m pip check
+
+      - name: Compile Python package
+        run: python -m compileall -q src/red_govern
+
+      - name: Type-check OpenAI Agents adapter
+        run: |
+          python -m mypy             --disallow-untyped-decorators             --warn-return-any             src/red_govern/openai_agents.py
+
+      - name: Validate agent assets
+        run: python scripts/validate_agent_assets.py
+
+      - name: Run OpenAI Agents adapter tests
+        run: python -m pytest -q tests/unit/test_openai_agents.py --no-cov
+
   package:
     name: Package validation
     runs-on: ubuntu-latest
@@ -156,6 +196,7 @@ jobs:
     needs:
       - quality
       - compatibility
+      - openai-agents
 
     steps:
       - name: Check out repository

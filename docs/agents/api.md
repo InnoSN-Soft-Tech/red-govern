@@ -3,9 +3,9 @@
 Red-Govern 0.1.0a3 provides a small, presentation-independent Python API for
 offline-safe configuration and privacy operations.
 
-This API is the shared contract for the CLI, the local stdio MCP adapter, and
-later agent integrations. It does not connect to Amazon Redshift and does not
-write files.
+This API is the shared contract for the CLI, the local stdio MCP adapter, the
+OpenAI Agents SDK adapter, and later integrations. It does not connect to Amazon
+Redshift and does not write files.
 
 ## Supported functions
 
@@ -82,6 +82,8 @@ print(audit.model_dump(mode="json"))
 - Operational collection functions remain outside this first API contract.
 - Local stdio MCP reuses this typed API without expanding its authority; see
   [Local stdio MCP](mcp.md).
+- OpenAI Agents SDK adapter also reuses this typed API without expanding its
+  authority or running a model; see [OpenAI Agents SDK adapter](openai-agents.md).
 
 Use documentation and API behavior that match the installed package version.
 The current contract targets Red-Govern 0.1.0a3.

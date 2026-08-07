@@ -47,6 +47,23 @@ The adapter does not open a port or provide HTTP, remote MCP, hosted monitoring,
 or background execution. See [Local stdio MCP](mcp.md) for its four tools and
 safety boundaries.
 
+## OpenAI Agents SDK
+
+The Step 47.1C source adapter uses `openai-agents>=0.19.4,<0.20`. The published
+SDK 0.19.4 metadata requires MCP below 2, while Red-Govern's local MCP extra
+requires `mcp>=2.0,<3`, so use a separate environment and do not combine the
+`agents` and `mcp` extras in this source snapshot:
+
+```bash
+python -m venv .venv-agents
+source .venv-agents/bin/activate
+python -m pip install --editable ".[agents]"
+```
+
+This step does not publish a new package to PyPI. Import, tool inspection, and
+`build_red_govern_agent()` construction require no OpenAI API key and perform no
+model request. See [OpenAI Agents SDK adapter](openai-agents.md).
+
 ## Match versions
 
 These resources match Red-Govern `0.1.0a3`. Confirm the installed package with:
