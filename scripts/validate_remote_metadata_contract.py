@@ -27,7 +27,7 @@ CHANGELOG_PATH = ROOT / "CHANGELOG.md"
 CI_PATH = ROOT / ".github" / "workflows" / "ci.yml"
 PYPROJECT_PATH = ROOT / "pyproject.toml"
 
-EXPECTED_VERSION = "0.1.0a3"
+EXPECTED_VERSION = "0.1.0a4"
 EXPECTED_SERVER = "https://api.snsoft.tech/red-govern"
 EXPECTED_RUNTIME = "red_govern.remote_api:app"
 EXPECTED_PATHS = {

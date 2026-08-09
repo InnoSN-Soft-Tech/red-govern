@@ -7,7 +7,7 @@ building a custom governance utility from scratch.
 
 !!! warning "Alpha software"
 
-    The current release is `0.1.0a3`. Commands, configuration fields, report
+    The current release is `0.1.0a4`. Commands, configuration fields, report
     formats, and compatibility behaviour may change before the first stable
     release. Review command help before operating against a production
     environment.

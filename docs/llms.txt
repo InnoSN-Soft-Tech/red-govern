@@ -2,7 +2,7 @@
 
 > Red-Govern is a local-first Python command-line toolkit for Amazon Redshift governance and operational intelligence.
 
-Red-Govern `0.1.0a3` supports Amazon Redshift capability detection, object
+Red-Govern `0.1.0a4` supports Amazon Redshift capability detection, object
 inventory, configured quota-pressure analysis, rule-based classification,
 privacy review, query-workload inspection, local snapshots, change comparison,
 and local governance reports.
@@ -35,7 +35,7 @@ passwords, tokens, private endpoints, or unredacted production reports.
 - [Remote metadata API](https://innosn-soft-tech.github.io/red-govern/agents/remote-metadata-api/): Four-operation public metadata runtime with deployment assets ready; public API not deployed.
 - [Remote metadata contract JSON](https://innosn-soft-tech.github.io/red-govern/agents/remote-metadata-contract.json): Machine-readable endpoint and safety contract.
 - [OpenAPI metadata schema](https://innosn-soft-tech.github.io/red-govern/agents/red-govern-metadata.openapi.json): OpenAPI 3.1 contract for future Actions and HTTP clients.
-- [Skill archive](https://github.com/InnoSN-Soft-Tech/red-govern/raw/main/agent-skills/dist/red-govern-0.1.0a3.zip): Versioned downloadable agent Skill bundle.
+- [Skill archive](https://github.com/InnoSN-Soft-Tech/red-govern/raw/main/agent-skills/dist/red-govern-0.1.0a4.zip): Versioned downloadable agent Skill bundle.
 - [Skill archive manifest](https://github.com/InnoSN-Soft-Tech/red-govern/blob/main/agent-skills/dist/manifest.json): Archive digest, contents, deterministic policy, and legal-file list.
 
 ## Redshift operation and trust
@@ -51,7 +51,7 @@ passwords, tokens, private endpoints, or unredacted production reports.
 - [PyPI package](https://pypi.org/project/red-govern/): Published Python distributions and installation metadata.
 - [GitHub repository](https://github.com/InnoSN-Soft-Tech/red-govern): Source, issues, releases, and contribution files.
 - [Changelog](https://github.com/InnoSN-Soft-Tech/red-govern/blob/main/CHANGELOG.md): Versioned changes and release history.
-- [Release v0.1.0a3](https://github.com/InnoSN-Soft-Tech/red-govern/releases/tag/v0.1.0a3): Current alpha release notes.
+- [Release v0.1.0a4](https://github.com/InnoSN-Soft-Tech/red-govern/releases/tag/v0.1.0a4): Current alpha release notes.
 - [License](https://github.com/InnoSN-Soft-Tech/red-govern/blob/main/LICENSE.md): PolyForm Perimeter License 1.0.1 terms.
 
 ## Optional

@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MAP_PATH = ROOT / "docs" / "problems" / "problem-command-map.json"
 CASES_PATH = ROOT / "agent-skills" / "evals" / "red-govern-cases.json"
 
-EXPECTED_VERSION = "0.1.0a3"
+EXPECTED_VERSION = "0.1.0a4"
 EXPECTED_ROUTING_CASES = 21
 EXPECTED_BOUNDARY_CASES = 7
 EXPECTED_TOTAL_CASES = 28

@@ -45,7 +45,7 @@ application. For example, external `/red-govern/v1/meta` becomes upstream
 From the repository root:
 
 ```bash
-docker build --tag red-govern-remote:0.1.0a3 .
+docker build --tag red-govern-remote:0.1.0a4 .
 ```
 
 Local container smoke test:
@@ -56,7 +56,7 @@ docker run --rm \
   --cap-drop ALL \
   --security-opt no-new-privileges:true \
   --publish 127.0.0.1:8080:8080 \
-  red-govern-remote:0.1.0a3
+  red-govern-remote:0.1.0a4
 ```
 
 The image runs as the non-root `redgovern` user. The application server header

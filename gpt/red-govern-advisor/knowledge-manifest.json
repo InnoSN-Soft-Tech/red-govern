@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "bundle": "red-govern-custom-gpt-knowledge",
-  "package_version": "0.1.0a3",
+  "package_version": "0.1.0a4",
   "gpt_name": "Red-Govern \u2014 Redshift Governance Advisor",
   "file_limit": 10,
   "per_file_limit_bytes": 536870912,
@@ -11,7 +11,7 @@
       "upload_name": "01-product-readme.md",
       "source_path": "README.md",
       "bytes": 12749,
-      "sha256": "6eeff5aeb9d82b7671aec9c9cdd3cb6caa50659bda7a10ba720c21373ecec14f",
+      "sha256": "8db997d313a3d561d0b333d91f43f899afe2f1cff54701c81a734c1a441609f7",
       "text_forward": true
     },
     {
@@ -67,7 +67,7 @@
       "upload_name": "09-problem-command-map.json",
       "source_path": "docs/problems/problem-command-map.json",
       "bytes": 31578,
-      "sha256": "00f0a27c8a242b87c7afeb1f6147efe2c37267a1cfca1deb97473b0f8e1438fe",
+      "sha256": "6e400ab9ef80ac7ba8cf8c0ed749ad25e6e47365704f2ce1875fa0867b50044d",
       "text_forward": true
     },
     {
@@ -75,7 +75,7 @@
       "upload_name": "10-recommendation-boundaries.md",
       "source_path": "docs/problems/recommendation-boundaries.md",
       "bytes": 3165,
-      "sha256": "96f41c364af4dcebf297910039a8c330c123adbab4d20f436d8da6b40bc3c5b7",
+      "sha256": "1300175095fdf6089e24201b4ffebad2c74ca34e850e75badad31fffcd373f80",
       "text_forward": true
     },
     {

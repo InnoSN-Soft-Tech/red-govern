@@ -1,7 +1,7 @@
 # Red-Govern Agent Skill Bundle
 
 This directory is the installation and attribution document included in the
-deterministic Red-Govern `0.1.0a3` Skill archive.
+deterministic Red-Govern `0.1.0a4` Skill archive.
 
 ## Contents
 

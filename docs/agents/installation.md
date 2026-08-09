@@ -4,11 +4,11 @@
 
 Download the deterministic archive from the public repository:
 
-[`red-govern-0.1.0a3.zip`](https://github.com/InnoSN-Soft-Tech/red-govern/raw/main/agent-skills/dist/red-govern-0.1.0a3.zip)
+[`red-govern-0.1.0a4.zip`](https://github.com/InnoSN-Soft-Tech/red-govern/raw/main/agent-skills/dist/red-govern-0.1.0a4.zip)
 
 Verify it with the published checksum:
 
-[`red-govern-0.1.0a3.sha256`](https://github.com/InnoSN-Soft-Tech/red-govern/blob/main/agent-skills/dist/red-govern-0.1.0a3.sha256)
+[`red-govern-0.1.0a4.sha256`](https://github.com/InnoSN-Soft-Tech/red-govern/blob/main/agent-skills/dist/red-govern-0.1.0a4.sha256)
 
 The external
 [`manifest.json`](https://github.com/InnoSN-Soft-Tech/red-govern/blob/main/agent-skills/dist/manifest.json)
@@ -33,7 +33,7 @@ repository-instruction mechanism.
 Install the optional, version-matched MCP adapter with:
 
 ```bash
-python -m pip install "red-govern[mcp]==0.1.0a3"
+python -m pip install "red-govern[mcp]==0.1.0a4"
 ```
 
 Run it as a local stdio process:
@@ -66,7 +66,7 @@ model request. See [OpenAI Agents SDK adapter](openai-agents.md).
 
 ## Match versions
 
-These resources match Red-Govern `0.1.0a3`. Confirm the installed package with:
+These resources match Red-Govern `0.1.0a4`. Confirm the installed package with:
 
 ```bash
 red-govern version

@@ -64,7 +64,7 @@ def test_metadata_response_matches_canonical_counts_and_boundaries() -> None:
     data = response.json()
 
     assert data["package"] == "red-govern"
-    assert data["package_version"] == "0.1.0a3"
+    assert data["package_version"] == "0.1.0a4"
     assert data["platform"] == "Amazon Redshift"
     assert data["project_status"] == "alpha"
     assert data["problem_count"] == len(problems)
@@ -92,7 +92,7 @@ def test_problem_list_matches_all_canonical_problem_summaries() -> None:
 
     assert response.status_code == 200
     data = response.json()
-    assert data["package_version"] == "0.1.0a3"
+    assert data["package_version"] == "0.1.0a4"
     assert data["count"] == 21
 
     expected = [
@@ -176,7 +176,7 @@ def test_command_list_matches_canonical_allowlist_without_execution() -> None:
 
     assert response.status_code == 200
     assert response.json() == {
-        "package_version": "0.1.0a3",
+        "package_version": "0.1.0a4",
         "count": 14,
         "commands": mapping["allowed_commands"],
     }

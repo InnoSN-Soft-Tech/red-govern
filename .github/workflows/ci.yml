@@ -307,7 +307,7 @@ jobs:
                   ) as response:
                       data = json.loads(response.read())
                       assert response.status == 200
-                      assert data["package_version"] == "0.1.0a3"
+                      assert data["package_version"] == "0.1.0a4"
                       assert data["problem_count"] == 21
                       assert data["allowed_command_count"] == 14
                       break

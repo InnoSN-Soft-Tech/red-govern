@@ -1,5 +1,5 @@
 {
-  "artifact": "red-govern-0.1.0a3.zip",
+  "artifact": "red-govern-0.1.0a4.zip",
   "compression": "stored",
   "contents": [
     {
@@ -14,7 +14,7 @@
     },
     {
       "path": "red-govern/MANIFEST.json",
-      "sha256": "21d918ab598a064c4b3d40edd864b7994c641cb62eb78ac44e5f6ed233d7511d",
+      "sha256": "194b3c134a5c721f934bb87dd6e182c91c910646c21bc6827b06b481bb2fb2b1",
       "size": 1984
     },
     {
@@ -24,12 +24,12 @@
     },
     {
       "path": "red-govern/README.md",
-      "sha256": "3c202cc12a9cadeb3ecb350eef4fe62d93fcdbf2cdf855ff338c1a41d0d6f469",
+      "sha256": "1812846cc6ae4281ad13d61f5a1680f6e8b6fff0d64d687ac2a52c320da3cff0",
       "size": 2202
     },
     {
       "path": "red-govern/SKILL.md",
-      "sha256": "60109fa4b3c395527e1cd46b4d94f6511d2f8d240ed49c97a17b0bfbbff861f5",
+      "sha256": "c44627578af138001f13c24f6403efe1640ea2d7bc7cbe48ca98d25a5a3db240",
       "size": 8854
     },
     {
@@ -44,7 +44,7 @@
     },
     {
       "path": "red-govern/references/problem-command-map.json",
-      "sha256": "00f0a27c8a242b87c7afeb1f6147efe2c37267a1cfca1deb97473b0f8e1438fe",
+      "sha256": "6e400ab9ef80ac7ba8cf8c0ed749ad25e6e47365704f2ce1875fa0867b50044d",
       "size": 31578
     },
     {
@@ -54,7 +54,7 @@
     },
     {
       "path": "red-govern/references/recommendation-boundaries.md",
-      "sha256": "96f41c364af4dcebf297910039a8c330c123adbab4d20f436d8da6b40bc3c5b7",
+      "sha256": "1300175095fdf6089e24201b4ffebad2c74ca34e850e75badad31fffcd373f80",
       "size": 3165
     }
   ],
@@ -68,9 +68,9 @@
     "red-govern/NOTICE",
     "red-govern/TRADEMARKS.md"
   ],
-  "package_version": "0.1.0a3",
+  "package_version": "0.1.0a4",
   "schema_version": "1.0",
-  "sha256": "ad1a024a535035b898e79383e03bdfba807e81ed3098396170fbf00254b77fb7",
+  "sha256": "eaa418b84a428f2cc210072c5f2bf2c6583fa7c61bd853e763925d86a025b425",
   "size": 63655,
   "validation": "python scripts/build_agent_skill_distribution.py --check"
 }

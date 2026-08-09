@@ -1,6 +1,6 @@
 # Remote metadata API
 
-Red-Govern `0.1.0a3` includes an optional read-only FastAPI runtime implementing
+Red-Govern `0.1.0a4` includes an optional read-only FastAPI runtime implementing
 the frozen four-operation remote metadata contract:
 
 ```text

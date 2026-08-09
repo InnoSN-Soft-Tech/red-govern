@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "asset_version": "0.1.0a3",
+  "asset_version": "0.1.0a4",
   "name": "Red-Govern \u2014 Redshift Governance Advisor",
   "description": "Version-aware guidance for safe Amazon Redshift governance workflows with Red-Govern, including setup, inventory, quota pressure, classification, privacy, reports, and workload review.",
   "builder": "InnoSN Soft Tech",

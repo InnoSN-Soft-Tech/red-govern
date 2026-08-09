@@ -74,7 +74,7 @@
   "next_step": "47.2F",
   "next_step_name": "Hosting target selection and public API deployment",
   "openapi_path": "docs/agents/red-govern-metadata.openapi.json",
-  "package_version": "0.1.0a3",
+  "package_version": "0.1.0a4",
   "planned_server_url": "https://api.snsoft.tech/red-govern",
   "privacy_policy_source": "PRIVACY.md",
   "privacy_policy_url": "https://innosn-soft-tech.github.io/red-govern/privacy/",

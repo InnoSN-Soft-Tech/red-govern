@@ -2,7 +2,7 @@
 
 Local-first governance and operational intelligence for Amazon Redshift.
 
-> **Project status:** Alpha (`0.1.0a3`).
+> **Project status:** Alpha (`0.1.0a4`).
 > Red-Govern is under active development. Commands, configuration fields, and
 > report formats may change before the first stable release.
 
@@ -299,8 +299,8 @@ unsupported requests:
 - [Custom GPT knowledge manifest](gpt/red-govern-advisor/knowledge-manifest.json)
 - [Custom GPT Preview evaluation plan](gpt/red-govern-advisor/evals.json)
 - [Custom GPT publishing checklist](gpt/red-govern-advisor/publishing-checklist.md)
-- [Deterministic Skill archive](agent-skills/dist/red-govern-0.1.0a3.zip)
-- [Skill archive checksum](agent-skills/dist/red-govern-0.1.0a3.sha256)
+- [Deterministic Skill archive](agent-skills/dist/red-govern-0.1.0a4.zip)
+- [Skill archive checksum](agent-skills/dist/red-govern-0.1.0a4.sha256)
 - [Skill archive manifest](agent-skills/dist/manifest.json)
 - [Problem taxonomy](docs/problems/index.md)
 - [Recommendation boundaries](docs/problems/recommendation-boundaries.md)

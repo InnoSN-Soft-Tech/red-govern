@@ -11,7 +11,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict
 
-PACKAGE_VERSION = "0.1.0a3"
+PACKAGE_VERSION = "0.1.0a4"
 ProblemStatus = Literal["supported", "conditional", "unsupported"]
 
 _DOCUMENTATION = "https://innosn-soft-tech.github.io/red-govern/"

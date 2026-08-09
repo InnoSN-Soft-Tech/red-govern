@@ -48,7 +48,7 @@
           "allowed_command_count": 14,
           "documentation": "https://innosn-soft-tech.github.io/red-govern/",
           "package": "red-govern",
-          "package_version": "0.1.0a3",
+          "package_version": "0.1.0a4",
           "platform": "Amazon Redshift",
           "problem_count": 21,
           "project_status": "alpha",
@@ -339,7 +339,7 @@
   "info": {
     "description": "Read-only public metadata API for Red-Govern. The runtime is implemented in Step 47.2C but the planned hosted endpoint is not deployed.",
     "title": "Red-Govern Remote Metadata API",
-    "version": "0.1.0a3"
+    "version": "0.1.0a4"
   },
   "openapi": "3.1.0",
   "paths": {

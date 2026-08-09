@@ -20,7 +20,7 @@ README_PATH = ROOT / "README.md"
 DOCS_INDEX_PATH = ROOT / "docs" / "index.md"
 MAP_PATH = ROOT / "docs" / "problems" / "problem-command-map.json"
 
-EXPECTED_VERSION = "0.1.0a3"
+EXPECTED_VERSION = "0.1.0a4"
 EXPECTED_IMAGE_SHA256 = "2eaf486380e934d40bfdc5fc07022d22ea4ccb20a71fe2557d1deda2c96bf288"
 EXPECTED_IMAGE_SIZE = (1200, 630)
 

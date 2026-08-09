@@ -31,7 +31,7 @@ def test_contract_is_versioned_deployment_assets_ready_not_deployed() -> None:
     contract = load(CONTRACT_PATH)
 
     assert contract["schema_version"] == "1.0"
-    assert contract["package_version"] == "0.1.0a3"
+    assert contract["package_version"] == "0.1.0a4"
     assert contract["deployment_status"] == "deployment-assets-ready-not-deployed"
     assert contract["runtime_module"] == "red_govern.remote_api:app"
     assert contract["current_custom_gpt_actions_enabled"] is False
@@ -165,7 +165,7 @@ def test_metadata_example_matches_canonical_counts() -> None:
         for status in ("supported", "conditional", "unsupported")
     }
 
-    assert example["package_version"] == "0.1.0a3"
+    assert example["package_version"] == "0.1.0a4"
     assert example["status_counts"] == counts
     assert example["allowed_command_count"] == len(mapping["allowed_commands"])
 

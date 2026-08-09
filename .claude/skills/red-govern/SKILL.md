@@ -12,7 +12,7 @@ operational intelligence for Amazon Redshift and the request matches the
 canonical problem map in
 [`references/problem-command-map.json`](references/problem-command-map.json).
 
-The skill is version-matched to Red-Govern `0.1.0a3`. It guides diagnosis,
+The skill is version-matched to Red-Govern `0.1.0a4`. It guides diagnosis,
 command selection, safety checks, and interpretation. It does not run commands
 unless the surrounding agent has an explicitly connected execution tool and the
 user authorises the operation.
@@ -79,11 +79,11 @@ Use documentation and references that match the installed package version.
 When installation is needed, recommend an isolated Python environment and:
 
 ```bash
-python -m pip install red-govern==0.1.0a3
+python -m pip install red-govern==0.1.0a4
 ```
 
 Confirm the installed version with `red-govern version`. When the installed
-version differs from `0.1.0a3`, do not assume this skill matches it. Ask the user
+version differs from `0.1.0a4`, do not assume this skill matches it. Ask the user
 to use version-matched documentation or explicitly acknowledge the mismatch.
 
 Installation does not grant Redshift network access, credentials, or system-view

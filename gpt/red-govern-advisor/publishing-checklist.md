@@ -1,7 +1,7 @@
 # Red-Govern Custom GPT publishing checklist
 
 Use this checklist for **Red-Govern — Redshift Governance Advisor** targeting
-package version **0.1.0a3**.
+package version **0.1.0a4**.
 
 ## 1. Private creation
 
@@ -30,7 +30,7 @@ package version **0.1.0a3**.
 - [ ] Confirm every source digest and byte count before upload.
 - [ ] Do not upload passwords, tokens, endpoints, production reports, query
       exports, customer data, or other secrets.
-- [ ] Confirm the GPT describes knowledge as package version 0.1.0a3.
+- [ ] Confirm the GPT describes knowledge as package version 0.1.0a4.
 - [ ] Confirm uploaded file content may be used in GPT responses.
 - [ ] Review current OpenAI file controls and retention information before
       uploading or replacing knowledge.
@@ -76,7 +76,7 @@ package version **0.1.0a3**.
       selection, or knowledge files change.
 - [ ] Record the GPT link, chosen model, visibility, upload date, and test
       evidence during Step 46.4.
-- [ ] Do not remove the 0.1.0a3 version warning until the knowledge bundle is
+- [ ] Do not remove the 0.1.0a4 version warning until the knowledge bundle is
       updated to a newer validated Red-Govern release.
 
 ## Official OpenAI references

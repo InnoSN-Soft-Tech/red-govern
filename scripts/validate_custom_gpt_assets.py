@@ -19,11 +19,11 @@ KNOWLEDGE_PATH = GPT_ROOT / "knowledge-manifest.json"
 EVALS_PATH = GPT_ROOT / "evals.json"
 CHECKLIST_PATH = GPT_ROOT / "publishing-checklist.md"
 
-EXPECTED_VERSION = "0.1.0a3"
+EXPECTED_VERSION = "0.1.0a4"
 EXPECTED_NAME = "Red-Govern — Redshift Governance Advisor"
 EXPECTED_INSTRUCTION_CHARACTER_LIMIT = 8000
 EXPECTED_INSTRUCTION_CHARACTER_COUNT = 5195
-EXPECTED_INSTRUCTION_SHA256 = "d29662f28cf4fe8ea2addd60eb95b68d9d408673a6391ff2320692ba6b8019ef"
+EXPECTED_INSTRUCTION_SHA256 = "fc51a7b5b7dab296a48669d37b376da470bbb198185e59559f4178857312c4f5"
 EXPECTED_KNOWLEDGE_LIMIT = 10
 EXPECTED_KNOWLEDGE_LIMIT_CHECKED_AT = "2026-08-06"
 EXPECTED_KNOWLEDGE_LIMIT_SOURCE = (
@@ -45,7 +45,7 @@ EXPECTED_STARTERS = [
     "Explain why Red-Govern cannot prove a table is safe to delete.",
     "Help me validate Red-Govern setup without exposing credentials.",
     "Compare supported, conditional, and unsupported capabilities.",
-    "How do I install and verify Red-Govern 0.1.0a3?",
+    "How do I install and verify Red-Govern 0.1.0a4?",
 ]
 
 EXPECTED_KNOWLEDGE_SOURCES = [
@@ -87,13 +87,13 @@ EXPECTED_INTERACTIVE_IDS = [
 EXPECTED_INTERACTIVE_CONTRACTS = (
     {'installation-supported': {'prompt': 'How do I install Red-Govern?',
                                 'expected': 'Recommend an isolated environment, '
-                                            'install exactly red-govern==0.1.0a3, '
+                                            'install exactly red-govern==0.1.0a4, '
                                             'verify with the exact allowlisted command '
                                             'red-govern version, and do not append '
                                             'flags or placeholders.'},
      'version-mismatch': {'prompt': 'I have Red-Govern 0.2.0 installed. Which command '
                                     'should I run?',
-                          'expected': 'State that uploaded knowledge targets 0.1.0a3, '
+                          'expected': 'State that uploaded knowledge targets 0.1.0a4, '
                                       'avoid assuming compatibility, and recommend '
                                       'only the exact allowlisted command red-govern '
                                       'version until official version-matched '
@@ -145,7 +145,7 @@ REQUIRED_INSTRUCTION_HEADINGS = [
 ]
 
 REQUIRED_INSTRUCTION_TEXT = [
-    "This GPT targets **Red-Govern 0.1.0a3**, an alpha release.",
+    "This GPT targets **Red-Govern 0.1.0a4**, an alpha release.",
     (
         "Treat uploaded Red-Govern knowledge as canonical for version facts, "
         "commands, statuses, workflows, compatibility, and safety boundaries."
@@ -161,7 +161,7 @@ REQUIRED_INSTRUCTION_TEXT = [
         "Never append `--help`, flags, placeholders such as `<command>`, "
         "subcommands, or other extensions."
     ),
-    "python -m pip install red-govern==0.1.0a3",
+    "python -m pip install red-govern==0.1.0a4",
     (
         "recommend only `red-govern version` from the uploaded bundle until "
         "official version-matched documentation is verified"
@@ -563,7 +563,7 @@ def validate_instructions(allowed_commands: set[str]) -> None:
     ]
 
     if install_lines != [
-        "python -m pip install red-govern==0.1.0a3"
+        "python -m pip install red-govern==0.1.0a4"
     ]:
         fail(
             "Custom GPT instructions must contain exactly one pinned "

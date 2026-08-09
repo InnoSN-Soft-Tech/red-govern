@@ -1,6 +1,6 @@
 # Typed Python API
 
-Red-Govern 0.1.0a3 provides a small, presentation-independent Python API for
+Red-Govern 0.1.0a4 provides a small, presentation-independent Python API for
 offline-safe configuration and privacy operations.
 
 This API is the shared contract for the CLI, the local stdio MCP adapter, the
@@ -86,4 +86,4 @@ print(audit.model_dump(mode="json"))
   authority or running a model; see [OpenAI Agents SDK adapter](openai-agents.md).
 
 Use documentation and API behavior that match the installed package version.
-The current contract targets Red-Govern 0.1.0a3.
+The current contract targets Red-Govern 0.1.0a4.

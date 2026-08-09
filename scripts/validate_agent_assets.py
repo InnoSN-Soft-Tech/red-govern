@@ -25,12 +25,12 @@ DISTRIBUTION_README = (
     ROOT / "agent-skills" / "distribution" / "README.md"
 )
 DIST_ROOT = ROOT / "agent-skills" / "dist"
-ARCHIVE_PATH = DIST_ROOT / "red-govern-0.1.0a3.zip"
-SHA_PATH = DIST_ROOT / "red-govern-0.1.0a3.sha256"
+ARCHIVE_PATH = DIST_ROOT / "red-govern-0.1.0a4.zip"
+SHA_PATH = DIST_ROOT / "red-govern-0.1.0a4.sha256"
 MANIFEST_PATH = DIST_ROOT / "manifest.json"
 
 EXPECTED_NAME = "red-govern"
-EXPECTED_VERSION = "0.1.0a3"
+EXPECTED_VERSION = "0.1.0a4"
 EXPECTED_DESCRIPTION = (
     "Guide users and AI agents through safe, version-aware Amazon Redshift "
     "governance workflows with Red-Govern. Use when the problem involves "
@@ -654,7 +654,7 @@ def validate_local_mcp_contract() -> None:
     mcp_doc = normalize_text(mcp_doc_path.read_text(encoding="utf-8"))
 
     for required in (
-        'red-govern[mcp]==0.1.0a3',
+        'red-govern[mcp]==0.1.0a4',
         "red-govern-mcp",
         "local stdio",
         "red_govern_get_version",
@@ -840,7 +840,7 @@ api_doc = normalize_text(
 )
 
 for required in (
-    "Red-Govern 0.1.0a3",
+    "Red-Govern 0.1.0a4",
     "`get_version()`",
     "`validate_config(path)`",
     "`get_redacted_config(path=None)`",

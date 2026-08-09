@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any, NoReturn
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "0.1.0a3"
+VERSION = "0.1.0a4"
 ARCHIVE_NAME = f"red-govern-{VERSION}.zip"
 SHA_NAME = f"red-govern-{VERSION}.sha256"
 

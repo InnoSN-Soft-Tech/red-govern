@@ -1,6 +1,6 @@
 # Local stdio MCP
 
-Red-Govern `0.1.0a3` includes an optional local Model Context Protocol adapter.
+Red-Govern `0.1.0a4` includes an optional local Model Context Protocol adapter.
 It exposes four structured tools over **stdio** and delegates directly to the
 typed Python API.
 
@@ -13,10 +13,10 @@ require an OpenAI API key.
 Install the version-matched optional dependency in an isolated environment:
 
 ```bash
-python -m pip install "red-govern[mcp]==0.1.0a3"
+python -m pip install "red-govern[mcp]==0.1.0a4"
 ```
 
-The MCP SDK is optional. Installing base `red-govern==0.1.0a3` continues to
+The MCP SDK is optional. Installing base `red-govern==0.1.0a4` continues to
 provide the existing CLI without requiring the MCP runtime.
 
 ## Run
