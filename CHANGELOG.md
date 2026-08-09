@@ -8,6 +8,11 @@ alpha, functionality and interfaces may change between releases.
 
 ## Unreleased
 
+## 0.1.0a4 - 2026-08-09
+
+Alpha integration release focused on safe programmatic and AI-agent access while preserving Red-Govern's local-first governance and non-destructive recommendation boundaries.
+
+
 ### API
 
 - Added provider-neutral deployment assets for the remote metadata runtime while keeping the production API and Custom GPT Actions disabled.
