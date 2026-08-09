@@ -50,8 +50,8 @@
       "upload_order": 6,
       "upload_name": "07-privacy.md",
       "source_path": "docs/privacy.md",
-      "bytes": 1760,
-      "sha256": "11e1a92f76d6102c786808ca1126562263b87b96485bd5acb83e032ee97d6635",
+      "bytes": 3896,
+      "sha256": "4119837f4a60d17d2a0ed843d4e8c30898d75955e717c501a59be6a4c910e228",
       "text_forward": true
     },
     {
@@ -88,7 +88,7 @@
     }
   ],
   "file_count": 10,
-  "total_bytes": 61575,
+  "total_bytes": 63711,
   "problem_entries": 21,
   "status_counts": {
     "supported": 12,

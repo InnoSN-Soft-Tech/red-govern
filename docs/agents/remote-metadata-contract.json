@@ -5,7 +5,16 @@
   "authentication": "none",
   "contract_name": "red-govern-remote-metadata",
   "current_custom_gpt_actions_enabled": false,
-  "deployment_status": "runtime-implemented-not-deployed",
+  "deployment": {
+    "container_file": "Dockerfile",
+    "container_port": 8080,
+    "external_base_path": "/red-govern",
+    "health_path": "/v1/meta",
+    "proxy_strips_external_prefix": true,
+    "reverse_proxy_example": "deployment/nginx-red-govern.conf.example",
+    "secrets_required": false
+  },
+  "deployment_status": "deployment-assets-ready-not-deployed",
   "documentation": "https://innosn-soft-tech.github.io/red-govern/agents/remote-metadata-api/",
   "endpoints": [
     {
@@ -62,13 +71,13 @@
     "SQL",
     "arbitrary commands"
   ],
-  "next_step": "47.2D",
-  "next_step_name": "Remote metadata API deployment readiness",
+  "next_step": "47.2F",
+  "next_step_name": "Hosting target selection and public API deployment",
   "openapi_path": "docs/agents/red-govern-metadata.openapi.json",
   "package_version": "0.1.0a3",
   "planned_server_url": "https://api.snsoft.tech/red-govern",
   "privacy_policy_source": "PRIVACY.md",
-  "privacy_policy_url": null,
+  "privacy_policy_url": "https://innosn-soft-tech.github.io/red-govern/privacy/",
   "problem_count": 21,
   "remote_redshift_runtime": false,
   "runtime_module": "red_govern.remote_api:app",

@@ -1,49 +1,100 @@
-# Red-Govern Privacy Notice
+# Red-Govern Privacy Policy
 
-Red-Govern is local-first. The current `0.1.0a3` package is designed so that
-configuration, snapshots, and generated reports remain on the machine where the
-CLI runs unless the user deliberately moves or shares them.
+Effective date: 7 August 2026
 
-## Current package behavior
+Red-Govern is a local-first Amazon Redshift governance project maintained by
+InnoSN Soft Tech. This policy describes both the local Red-Govern package and
+the planned public read-only metadata API.
 
-The current package does not operate a hosted Red-Govern service. Telemetry and
-external services are disabled by default in the starter configuration. Users
-remain responsible for handling generated operational metadata according to
-their organisation's policies.
+## Local Red-Govern package
 
-## Remote metadata runtime
+Configuration, snapshots, generated reports, and operational metadata remain on
+the machine where the CLI runs unless the user deliberately moves or shares
+them.
 
-The Step 47.2C remote metadata API runtime is implemented in the source tree,
-but the hosted endpoint is not deployed. It exposes only public, versioned
-package metadata such as the Red-Govern version, problem taxonomy, support
-status, canonical command allowlist, documentation links, and safety
-boundaries.
+The starter configuration disables telemetry, external services, and query-text
+capture. Red-Govern does not require users to send Redshift passwords, tokens,
+private endpoints, connection strings, or unredacted production output to
+InnoSN Soft Tech.
 
-The remote metadata runtime:
+## Public remote metadata API
 
-- does not accept passwords, tokens, credentials, private endpoints, connection
-  strings, or unredacted production outputs;
-- does not accept local Red-Govern configuration files;
+The remote metadata API runtime is implemented, but the production endpoint is
+not deployed as of the effective date above. When deployed, the planned public
+endpoint is:
+
+```text
+https://api.snsoft.tech/red-govern
+```
+
+The API is limited to public, versioned Red-Govern metadata: package version,
+problem taxonomy, support status, the canonical command allowlist,
+documentation links, and fixed safety boundaries.
+
+The public metadata API:
+
+- does not accept Redshift passwords, tokens, credentials, private endpoints, or
+  connection strings;
+- does not accept local Red-Govern configuration files or unredacted production
+  outputs;
 - does not connect to Amazon Redshift;
 - does not execute SQL;
 - does not execute Red-Govern commands;
-- does not provide destructive remediation or prove that an object is safe to
-  delete.
+- does not perform destructive remediation;
+- does not prove that a database object is safe to delete;
+- does not use application authentication or user accounts for this public
+  metadata surface.
 
-The implementation reads a packaged copy of public canonical metadata. The
-runtime has no Redshift connection path and no local-configuration upload
-surface.
+## Technical request metadata
 
-No public Action endpoint is live in Step 47.2C, and Custom GPT Actions remain
-disabled until a hosted runtime and public privacy-policy URL pass separate
-external validation.
+A hosted HTTPS service necessarily processes limited technical information in
+order to receive and protect requests. Depending on the selected hosting, DNS,
+TLS, reverse-proxy, CDN, or security provider, this can include:
 
-## Operational data
+- source IP address;
+- user agent and basic HTTP headers;
+- request timestamp;
+- requested route and query selector;
+- response status and timing;
+- network, abuse-prevention, and security events.
 
-Even local governance metadata can reveal environment-specific identifiers,
+The Red-Govern application disables Uvicorn access logging in the recommended
+deployment command. Infrastructure providers may still create operational or
+security logs under their own service settings and policies. The deployment is
+designed to minimize such logging and does not require application secrets.
+
+Provider-specific disclosures and retention settings must be reviewed before
+the production endpoint is activated.
+
+## Cookies, advertising, and sale of data
+
+The planned metadata API does not use cookies, advertising identifiers, or
+behavioral advertising. InnoSN Soft Tech does not sell personal data collected
+through the Red-Govern metadata API.
+
+## Operational Redshift metadata
+
+Local Red-Govern outputs can still reveal environment-specific identifiers,
 database usernames, object names, query metadata, classification labels, local
 paths, and report names. Review and redact operational outputs before sharing
-them.
+them with any third party.
+
+## Security and retention
+
+The public metadata API is designed to expose only non-sensitive project
+metadata and to accept no request body. Edge rate limiting, HTTPS, a non-root
+container, restricted process permissions, and short network timeouts are part
+of the deployment contract.
+
+Any infrastructure log retention should be configured to the minimum period
+needed for availability, abuse prevention, and security operations, subject to
+the selected provider and applicable obligations.
+
+## Changes to this policy
+
+This policy may be updated as the hosting provider, deployment architecture, or
+public API capabilities change. Material changes should be reflected in both
+the repository copy and this public documentation page.
 
 ## Contact
 

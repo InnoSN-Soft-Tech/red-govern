@@ -477,7 +477,7 @@
   "security": [],
   "servers": [
     {
-      "description": "Planned endpoint; runtime implemented, not deployed",
+      "description": "Planned endpoint; deployment assets ready, not deployed",
       "url": "https://api.snsoft.tech/red-govern"
     }
   ],
@@ -487,6 +487,7 @@
       "name": "Metadata"
     }
   ],
-  "x-red-govern-deployment-status": "runtime-implemented-not-deployed",
+  "x-red-govern-deployment-status": "deployment-assets-ready-not-deployed",
+  "x-red-govern-privacy-policy-url": "https://innosn-soft-tech.github.io/red-govern/privacy/",
   "x-red-govern-runtime": "red_govern.remote_api:app"
 }

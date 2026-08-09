@@ -66,7 +66,8 @@ jobs:
             scripts/evaluate_agent_skill.py \
             scripts/build_agent_skill_distribution.py \
             scripts/validate_custom_gpt_assets.py \
-            scripts/validate_remote_metadata_contract.py
+            scripts/validate_remote_metadata_contract.py \
+            scripts/validate_remote_deployment_assets.py
 
       - name: Validate problem taxonomy
         run: python scripts/validate_problem_taxonomy.py
@@ -82,6 +83,9 @@ jobs:
 
       - name: Validate remote metadata contract
         run: python scripts/validate_remote_metadata_contract.py
+
+      - name: Validate remote deployment assets
+        run: python scripts/validate_remote_deployment_assets.py
 
       - name: Evaluate agent Skill contract
         run: python scripts/evaluate_agent_skill.py
@@ -146,6 +150,9 @@ jobs:
 
       - name: Validate remote metadata contract
         run: python scripts/validate_remote_metadata_contract.py
+
+      - name: Validate remote deployment assets
+        run: python scripts/validate_remote_deployment_assets.py
 
       - name: Evaluate agent Skill contract
         run: python scripts/evaluate_agent_skill.py
@@ -235,6 +242,100 @@ jobs:
       - name: Run remote metadata API tests
         run: python -m pytest -q tests/unit/test_remote_api.py tests/unit/test_remote_metadata_contract.py --no-cov
 
+  deployment-assets:
+    name: Remote deployment assets
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version-file: .python-version
+
+      - name: Validate remote deployment assets
+        run: python scripts/validate_remote_deployment_assets.py
+
+      - name: Build remote metadata container
+        run: docker build --tag red-govern-remote:ci .
+
+      - name: Inspect container contract
+        run: |
+          python - <<'PY'
+          import json
+          import subprocess
+
+          image = json.loads(
+              subprocess.check_output(
+                  ["docker", "image", "inspect", "red-govern-remote:ci"],
+                  text=True,
+              )
+          )[0]
+          config = image["Config"]
+          assert config["User"] == "redgovern"
+          assert set(config["ExposedPorts"]) == {"8080/tcp"}
+          assert config["Healthcheck"]["Test"][0] == "CMD-SHELL"
+          assert "127.0.0.1:8080/v1/meta" in config["Healthcheck"]["Test"][1]
+          assert config["Cmd"][-2:] == ["--workers", "1"]
+          print("Container image contract: passed")
+          PY
+
+      - name: Run restricted container smoke test
+        run: |
+          set -Eeuo pipefail
+          cid="$(
+            docker run --detach --rm               --read-only               --cap-drop ALL               --security-opt no-new-privileges:true               --publish 127.0.0.1:18080:8080               red-govern-remote:ci
+          )"
+          trap 'docker rm --force "$cid" >/dev/null 2>&1 || true' EXIT
+
+          python - <<'PY'
+          import json
+          import time
+          import urllib.error
+          import urllib.request
+
+          base = "http://127.0.0.1:18080"
+          last = None
+          for _ in range(40):
+              try:
+                  with urllib.request.urlopen(
+                      base + "/v1/meta",
+                      timeout=2,
+                  ) as response:
+                      data = json.loads(response.read())
+                      assert response.status == 200
+                      assert data["package_version"] == "0.1.0a3"
+                      assert data["problem_count"] == 21
+                      assert data["allowed_command_count"] == 14
+                      break
+              except Exception as exc:
+                  last = exc
+                  time.sleep(0.25)
+          else:
+              raise RuntimeError(
+                  f"Container did not become ready: {last!r}"
+              )
+
+          with urllib.request.urlopen(
+              base + "/v1/commands",
+              timeout=2,
+          ) as response:
+              commands = json.loads(response.read())
+          assert commands["count"] == 14
+
+          try:
+              urllib.request.urlopen(base + "/docs", timeout=2)
+          except urllib.error.HTTPError as exc:
+              assert exc.code == 404
+          else:
+              raise AssertionError("/docs unexpectedly available")
+
+          print("Restricted container smoke test: passed")
+          PY
+
   package:
     name: Package validation
     runs-on: ubuntu-latest
@@ -244,6 +345,7 @@ jobs:
       - compatibility
       - openai-agents
       - remote-api
+      - deployment-assets
 
     steps:
       - name: Check out repository

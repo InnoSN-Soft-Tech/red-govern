@@ -135,12 +135,16 @@ def validate_contract(
         fail("Remote metadata contract schema_version differs.")
     if contract.get("package_version") != EXPECTED_VERSION:
         fail("Remote metadata contract package version differs.")
-    if contract.get("deployment_status") != "runtime-implemented-not-deployed":
+    if contract.get("deployment_status") != "deployment-assets-ready-not-deployed":
         fail("Remote metadata deployment status differs.")
     if contract.get("runtime_module") != EXPECTED_RUNTIME:
         fail("Remote metadata runtime module differs.")
     if contract.get("planned_server_url") != EXPECTED_SERVER:
         fail("Remote metadata planned server differs.")
+    if contract.get("privacy_policy_url") != (
+        "https://innosn-soft-tech.github.io/red-govern/privacy/"
+    ):
+        fail("Remote metadata privacy-policy URL differs.")
     if contract.get("authentication") != "none":
         fail("Remote metadata contract must remain unauthenticated public metadata.")
     if contract.get("current_custom_gpt_actions_enabled") is not False:
@@ -151,7 +155,7 @@ def validate_contract(
         fail("Remote metadata runtime must not accept credentials.")
     if contract.get("accepts_local_configuration") is not False:
         fail("Remote metadata runtime must not accept local configuration.")
-    if contract.get("next_step") != "47.2D":
+    if contract.get("next_step") != "47.2F":
         fail("Remote metadata contract next step differs.")
 
     endpoints = contract.get("endpoints")
@@ -192,9 +196,14 @@ def validate_openapi(
         fail("OpenAPI info.version differs.")
 
     if spec.get("x-red-govern-deployment-status") != (
-        "runtime-implemented-not-deployed"
+        "deployment-assets-ready-not-deployed"
     ):
         fail("OpenAPI deployment marker differs.")
+
+    if spec.get("x-red-govern-privacy-policy-url") != (
+        "https://innosn-soft-tech.github.io/red-govern/privacy/"
+    ):
+        fail("OpenAPI privacy-policy URL differs.")
 
     if spec.get("x-red-govern-runtime") != EXPECTED_RUNTIME:
         fail("OpenAPI runtime marker differs.")
@@ -202,7 +211,7 @@ def validate_openapi(
     expected_servers = [
         {
             "url": EXPECTED_SERVER,
-            "description": "Planned endpoint; runtime implemented, not deployed",
+            "description": "Planned endpoint; deployment assets ready, not deployed",
         }
     ]
     if spec.get("servers") != expected_servers:
@@ -380,22 +389,23 @@ def validate_docs_privacy_ci() -> None:
     """Validate docs, privacy, GPT boundary, and dedicated CI."""
     doc = normalize_text(DOC_PATH.read_text(encoding="utf-8"))
     for required in (
-        "runtime is implemented",
-        "not deployed",
+        "deployment assets are ready",
+        "production API is still not deployed",
         "red_govern.remote_api:app",
-        'python -m pip install --editable ".[remote]"',
-        "127.0.0.1",
+        "Dockerfile",
+        "public privacy policy",
         "does not connect to Amazon Redshift",
         "Custom GPT Actions remain disabled",
-        "Step 47.2D",
+        "Step 47.2F",
     ):
         if normalize_text(required) not in doc:
             fail(f"Remote metadata documentation omits: {required}")
 
     privacy = normalize_text(PRIVACY_PATH.read_text(encoding="utf-8"))
     for required in (
-        "remote metadata API runtime is implemented",
-        "hosted endpoint is not deployed",
+        "Public remote metadata API",
+        "production endpoint is not deployed",
+        "Technical request metadata",
         "does not accept local Red-Govern configuration files",
         "does not connect to Amazon Redshift",
         "does not execute SQL",
@@ -405,8 +415,8 @@ def validate_docs_privacy_ci() -> None:
             fail(f"PRIVACY.md omits: {required}")
 
     llms = normalize_text(LLMS_PATH.read_text(encoding="utf-8"))
-    if "runtime implemented; hosted endpoint not deployed" not in llms:
-        fail("llms.txt does not describe the remote runtime status.")
+    if "deployment assets ready; public API not deployed" not in llms:
+        fail("llms.txt does not describe the remote deployment status.")
 
     changelog = CHANGELOG_PATH.read_text(encoding="utf-8")
     if "Implemented the optional FastAPI remote metadata runtime" not in changelog:
@@ -483,7 +493,7 @@ def main() -> int:
     print("Command execution endpoints: 0")
     print("Built-in docs/OpenAPI routes: disabled")
     print("Custom GPT Actions: disabled")
-    print("Deployment status: runtime-implemented-not-deployed")
+    print("Deployment status: deployment-assets-ready-not-deployed")
     print("Remote metadata API runtime validation passed.")
     return 0
 
