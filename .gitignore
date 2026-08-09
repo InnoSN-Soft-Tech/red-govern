@@ -235,3 +235,9 @@ __marimo__/
 
 # macOS metadata
 .DS_Store
+
+# Red-Govern versioned agent Skill distribution (tracked release assets)
+!/agent-skills/dist/
+!/agent-skills/dist/manifest.json
+!/agent-skills/dist/red-govern-*.zip
+!/agent-skills/dist/red-govern-*.sha256
