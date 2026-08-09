@@ -37,7 +37,18 @@ jobs:
           cache-dependency-path: pyproject.toml
 
       - name: Install package-build tools
-        run: python -m pip install --upgrade pip build twine
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install \
+            "build==1.5.0" \
+            "hatchling==1.31.0" \
+            "twine==7.0.0"
+
+      - name: Set reproducible build environment
+        run: |
+          echo "SOURCE_DATE_EPOCH=$(git show -s --format=%ct HEAD)" >> "${GITHUB_ENV}"
+          echo "PYTHONHASHSEED=0" >> "${GITHUB_ENV}"
+          echo "TZ=UTC" >> "${GITHUB_ENV}"
 
       - name: Validate release tag against package version
         if: github.event_name == 'release'
@@ -70,7 +81,7 @@ jobs:
         run: rm -rf build dist
 
       - name: Build wheel and source distribution
-        run: python -m build
+        run: python -m build --no-isolation
 
       - name: Validate distribution metadata
         run: python -m twine check --strict dist/*
