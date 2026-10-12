@@ -83,7 +83,7 @@ mcp = [
 ]
 
 agents = [
-    "openai-agents>=0.19.4,<0.20",
+    "openai-agents>=0.19.4,<0.24",
 ]
 
 remote = [
